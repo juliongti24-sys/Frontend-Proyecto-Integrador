@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Trayectoria</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/estudiante.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="estudiante-body">
+
+  <%- include('../partials/sidebar-estudiante', { active: 'trayectoria' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">E</div>
+        <span class="user-name" id="nombreUsuario">Estudiante</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Encabezado -->
+      <div class="page-header">
+        <div>
+          <h1>Trayectoria</h1>
+          <p>Estudia los temas a tu ritmo y monitorea tu avance</p>
+        </div>
+      </div>
+
+      <!-- Grid de temas -->
+      <div class="trayectoria-grid" id="trayectoriaGrid">
+        <!-- Los temas se cargarán desde la API -->
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/sesion-estudiante.js"></script>
+</body>
+</html>

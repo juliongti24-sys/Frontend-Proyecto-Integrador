@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Clase</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/maestro.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="maestro-body">
+
+  <%- include('../partials/sidebar-maestro', { active: 'clases' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">M</div>
+        <span class="user-name" id="nombreUsuario">Maestro</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/maestro/dashboard" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar a mis clases
+      </a>
+
+      <!-- Encabezado de la clase -->
+      <div class="page-header">
+        <div>
+          <h1 id="claseNombre">Nombre de la clase</h1>
+          <p id="claseGrupo">Grupo –</p>
+        </div>
+        <div class="class-code">
+          <i class="fas fa-key"></i>
+          <span id="claseCodigo">––––––</span>
+        </div>
+      </div>
+
+      <!-- Pestañas -->
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="actividades">
+          <i class="fas fa-list-check"></i> Actividades
+        </button>
+        <button class="tab-btn" data-tab="alumnos">
+          <i class="fas fa-users"></i> Alumnos
+        </button>
+      </div>
+
+      <!-- ── Pestaña Actividades ── -->
+      <div class="tab-panel active" id="tab-actividades">
+
+        <!-- Botones agregar -->
+        <div style="display:flex; gap:0.75rem; margin-bottom:1.2rem; flex-wrap:wrap;">
+          <button class="btn-primary" id="btnAgregarTarea">
+            <i class="fas fa-plus"></i> Agregar tarea
+          </button>
+          <button class="btn-secondary" id="btnAgregarAviso">
+            <i class="fas fa-bullhorn"></i> Agregar aviso
+          </button>
+        </div>
+
+        <!-- Formulario inline -->
+        <div class="activity-form-inline" id="formInline">
+          <div class="form-row">
+            <input type="text" id="inlineTitulo" placeholder="Título" />
+            <input type="date" id="inlineFecha" />
+            <select id="inlineTipo">
+              <option value="tarea">Tarea</option>
+              <option value="aviso">Aviso</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <textarea id="inlineDescripcion" placeholder="Descripción (opcional)" rows="2"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn-secondary" id="cancelarInline">Cancelar</button>
+            <button class="btn-primary" id="guardarInline">
+              <i class="fas fa-check"></i> Guardar
+            </button>
+          </div>
+        </div>
+
+        <!-- Lista de actividades -->
+        <div class="activity-list" id="listaActividades">
+          <!-- Las actividades se cargarán desde la API -->
+        </div>
+
+      </div>
+
+      <!-- ── Pestaña Alumnos ── -->
+      <div class="tab-panel" id="tab-alumnos">
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Avance Trayectoria</th>
+                <th>Calificación</th>
+              </tr>
+            </thead>
+            <tbody id="tablaAlumnos">
+              <!-- Los alumnos se cargarán desde la API -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/clase-maestro.js"></script>
+  <script src="/js/sesion-maestro.js"></script>
+</body>
+</html>

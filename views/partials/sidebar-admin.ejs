@@ -1,0 +1,25 @@
+<aside class="sidebar">
+
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    Math<span>Boost</span>
+  </div>
+
+  <!-- Navegación -->
+  <nav>
+    <a href="/admin/dashboard" class="<%= active === 'inicio' ? 'active' : '' %>">
+      <i class="fas fa-house"></i> Inicio
+    </a>
+    <a href="/admin/perfil" class="<%= active === 'perfil' ? 'active' : '' %>">
+      <i class="fas fa-circle-user"></i> Perfil
+    </a>
+  </nav>
+
+  <!-- Cerrar sesión -->
+  <div class="sidebar-footer">
+    <a href="#" id="btnCerrarSesion">
+      <i class="fas fa-right-from-bracket"></i> Cerrar sesión
+    </a>
+  </div>
+
+</aside>

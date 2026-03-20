@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Tema</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/estudiante.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="estudiante-body">
+
+  <%- include('../partials/sidebar-estudiante', { active: 'trayectoria' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">E</div>
+        <span class="user-name" id="nombreUsuario">Estudiante</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/estudiante/trayectoria" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar a trayectoria
+      </a>
+
+      <div class="tema-container">
+
+        <!-- Indicador de pasos -->
+        <div class="step-indicator" id="stepIndicator">
+          <div class="step-dot active" data-step="pregunta"></div>
+          <div class="step-dot" data-step="teoria"></div>
+          <div class="step-dot" data-step="ejercicios"></div>
+        </div>
+
+        <!-- ── Paso 1: Pregunta diagnóstico ── -->
+        <div id="vistaPregunta">
+
+          <div class="ejercicio-card">
+
+            <p style="color:#f59e0b; font-size:0.85rem; font-weight:600; margin-bottom:1rem;">
+              <i class="fas fa-lightbulb"></i> Pregunta diagnóstico
+            </p>
+
+            <div class="ejercicio-pregunta" id="textoPregunta">
+              Cargando pregunta...
+            </div>
+
+            <div class="opciones-list" id="listaOpciones">
+              <button class="opcion-btn" data-opcion="A">
+                <span class="opcion-letra">A</span>
+                <span class="opcion-texto">–</span>
+              </button>
+              <button class="opcion-btn" data-opcion="B">
+                <span class="opcion-letra">B</span>
+                <span class="opcion-texto">–</span>
+              </button>
+              <button class="opcion-btn" data-opcion="C">
+                <span class="opcion-letra">C</span>
+                <span class="opcion-texto">–</span>
+              </button>
+              <button class="opcion-btn" data-opcion="D">
+                <span class="opcion-letra">D</span>
+                <span class="opcion-texto">–</span>
+              </button>
+            </div>
+
+            <div class="feedback-box" id="feedbackPregunta"></div>
+
+            <button class="btn-primary" id="btnIrTeoria" style="display:none;">
+              Ver teoría <i class="fas fa-arrow-right"></i>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- ── Paso 2: Teoría ── -->
+        <div id="vistaTeoria" style="display:none;">
+
+          <div class="teoria-box">
+            <h2 id="tituloTeoria">Cargando teoría...</h2>
+            <div id="contenidoTeoria" style="color:#9ca3af; line-height:1.8;">
+              El contenido de la teoría se cargará desde la API.
+            </div>
+          </div>
+
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn-secondary" id="btnVolverPregunta">
+              <i class="fas fa-arrow-left"></i> Volver a la pregunta
+            </button>
+            <button class="btn-primary" id="btnIrEjercicios">
+              Practicar ejercicios <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ── Paso 3: Ir a ejercicios ── -->
+        <div id="vistaIrEjercicios" style="display:none;">
+
+          <div class="ejercicio-card" style="text-align:center;">
+            <i class="fas fa-pencil" style="font-size:2.5rem; color:#f59e0b; margin-bottom:1rem;"></i>
+            <h2 style="color:#f1f0f5; margin-bottom:0.5rem;">¡Listo para practicar!</h2>
+            <p style="color:#9ca3af; margin-bottom:1.5rem;">
+              Ahora resolverás 10 ejercicios sobre este tema con retroalimentación en cada uno.
+            </p>
+            <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+              <button class="btn-secondary" id="btnVolverTeoria">
+                <i class="fas fa-arrow-left"></i> Repasar teoría
+              </button>
+              <a href="/estudiante/ejercicios" class="btn-primary">
+                Comenzar ejercicios <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Helpers ──
+    const mostrar = id => document.getElementById(id).style.display = 'block'
+    const ocultar = id => document.getElementById(id).style.display = 'none'
+
+    function actualizarSteps(paso) {
+      const steps = document.querySelectorAll('.step-dot')
+      const orden = ['pregunta', 'teoria', 'ejercicios']
+      const idx   = orden.indexOf(paso)
+      steps.forEach((dot, i) => {
+        dot.classList.remove('active', 'done')
+        if (i < idx)      dot.classList.add('done')
+        else if (i === idx) dot.classList.add('active')
+      })
+    }
+
+    // ── Paso 1: Pregunta ──
+    document.querySelectorAll('.opcion-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('disabled')) return
+        document.querySelectorAll('.opcion-btn').forEach(b => b.classList.add('disabled'))
+
+        // Aquí irá la validación con la API
+        const feedback = document.getElementById('feedbackPregunta')
+        feedback.className = 'feedback-box correct'
+        feedback.innerHTML = '<i class="fas fa-circle-check"></i> ¡Correcto! Continúa a la teoría.'
+        btn.classList.add('correct')
+
+        document.getElementById('btnIrTeoria').style.display = 'inline-flex'
+      })
+    })
+
+    document.getElementById('btnIrTeoria').addEventListener('click', () => {
+      ocultar('vistaPregunta')
+      mostrar('vistaTeoria')
+      actualizarSteps('teoria')
+    })
+
+    // ── Paso 2: Teoría ──
+    document.getElementById('btnVolverPregunta').addEventListener('click', () => {
+      ocultar('vistaTeoria')
+      mostrar('vistaPregunta')
+      actualizarSteps('pregunta')
+    })
+
+    document.getElementById('btnIrEjercicios').addEventListener('click', () => {
+      ocultar('vistaTeoria')
+      mostrar('vistaIrEjercicios')
+      actualizarSteps('ejercicios')
+    })
+
+    // ── Paso 3 ──
+    document.getElementById('btnVolverTeoria').addEventListener('click', () => {
+      ocultar('vistaIrEjercicios')
+      mostrar('vistaTeoria')
+      actualizarSteps('teoria')
+    })
+  </script>
+  <script src="/js/sesion-estudiante.js"></script>
+
+</body>
+</html>

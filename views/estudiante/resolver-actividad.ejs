@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Resolver Actividad</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/estudiante.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="estudiante-body">
+
+  <%- include('../partials/sidebar-estudiante', { active: 'clases' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">E</div>
+        <span class="user-name" id="nombreUsuario">Estudiante</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/estudiante/clase" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar a la clase
+      </a>
+
+      <!-- Vista: Ejercicios -->
+      <div id="vistaEjercicios">
+
+        <div class="ejercicio-card">
+
+          <!-- Progreso -->
+          <div class="ejercicio-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="barraProgreso" style="width: 0%"></div>
+            </div>
+            <span class="ejercicio-counter" id="contadorEjercicio">1 / 10</span>
+          </div>
+
+          <!-- Pregunta -->
+          <div class="ejercicio-pregunta" id="textoPregunta">
+            Cargando pregunta...
+          </div>
+
+          <!-- Opciones -->
+          <div class="opciones-list" id="listaOpciones">
+            <button class="opcion-btn" data-opcion="A">
+              <span class="opcion-letra">A</span>
+              <span class="opcion-texto">–</span>
+            </button>
+            <button class="opcion-btn" data-opcion="B">
+              <span class="opcion-letra">B</span>
+              <span class="opcion-texto">–</span>
+            </button>
+            <button class="opcion-btn" data-opcion="C">
+              <span class="opcion-letra">C</span>
+              <span class="opcion-texto">–</span>
+            </button>
+            <button class="opcion-btn" data-opcion="D">
+              <span class="opcion-letra">D</span>
+              <span class="opcion-texto">–</span>
+            </button>
+          </div>
+
+          <!-- Feedback -->
+          <div class="feedback-box" id="feedbackBox"></div>
+
+          <!-- Botón siguiente -->
+          <button class="btn-primary" id="btnSiguiente" style="display:none;">
+            Siguiente <i class="fas fa-arrow-right"></i>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Vista: Resultado final -->
+      <div id="vistaResultado" style="display:none;">
+        <div class="resultado-card">
+          <i class="fas fa-trophy" style="font-size:2.5rem; color:#f59e0b;"></i>
+          <div class="resultado-score" id="resultadoScore">0</div>
+          <div class="resultado-label">de 10 respuestas correctas</div>
+          <p style="color:#9ca3af; font-size:0.9rem; margin-bottom:1.5rem;" id="resultadoMensaje"></p>
+          <a href="/estudiante/clase" class="btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver a la clase
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/clase-estudiante.js"></script>
+  <script src="/js/sesion-estudiante.js"></script>
+
+</body>
+</html>

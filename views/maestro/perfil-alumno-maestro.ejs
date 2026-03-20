@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Perfil Alumno</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/maestro.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="maestro-body">
+
+  <%- include('../partials/sidebar-maestro', { active: 'clases' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">M</div>
+        <span class="user-name" id="nombreUsuario">Maestro</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/maestro/clase" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar a la clase
+      </a>
+
+      <!-- Info del alumno -->
+      <div class="alumno-profile-top">
+        <div class="alumno-avatar">A</div>
+        <div class="alumno-info">
+          <h2 id="alumnoNombre">Nombre del alumno</h2>
+          <p id="alumnoMatricula">Matrícula: –</p>
+          <p id="alumnoCorreo">Correo: –</p>
+        </div>
+      </div>
+
+      <!-- Gráficas -->
+      <div class="charts-grid">
+
+        <div class="chart-card">
+          <h3><i class="fas fa-chart-line"></i> Avance en Trayectoria</h3>
+          <canvas id="chartTrayectoria"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h3><i class="fas fa-star"></i> Calificaciones por actividad</h3>
+          <canvas id="chartCalificaciones"></canvas>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Chart Trayectoria ──
+    new Chart(document.getElementById('chartTrayectoria'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Completado', 'Pendiente'],
+        datasets: [{
+          data: [0, 100],
+          backgroundColor: ['#f59e0b', 'rgba(255,255,255,0.08)'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: {
+            labels: { color: '#9ca3af', font: { size: 12 } }
+          }
+        }
+      }
+    })
+
+    // ── Chart Calificaciones ──
+    new Chart(document.getElementById('chartCalificaciones'), {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Calificación',
+          data: [],
+          backgroundColor: 'rgba(245,158,11,0.5)',
+          borderColor: '#f59e0b',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { color: '#9ca3af' },
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          x: {
+            ticks: { color: '#9ca3af' },
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: { color: '#9ca3af' }
+          }
+        }
+      }
+    })
+
+  </script>
+  <script src="/js/sesion-maestro.js"></script>
+</body>
+</html>

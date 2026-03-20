@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Dashboard Maestro</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/maestro.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="maestro-body">
+
+  <%- include('../partials/sidebar-maestro', { active: 'inicio' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">M</div>
+        <span class="user-name" id="nombreUsuario">Maestro</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Encabezado -->
+      <div class="page-header">
+        <div>
+          <h1>Mis Clases</h1>
+          <p>Gestiona y organiza tus grupos</p>
+        </div>
+      </div>
+
+      <!-- Grid de clases -->
+      <div class="classes-grid" id="clasesGrid">
+
+        <!-- Las clases se cargarán desde la API -->
+
+        <!-- Botón crear clase -->
+        <button class="btn-add-class" id="btnAbrirCrear">
+          <i class="fas fa-plus"></i> Nueva clase
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Modal Crear Clase ── -->
+  <div class="modal-overlay" id="modalCrear">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-plus"></i> Nueva clase</h2>
+        <button class="modal-close" id="cerrarCrear">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre de la clase</label>
+        <input type="text" id="crearNombre" placeholder="Ej. Cálculo Diferencial" />
+      </div>
+      <div class="form-group">
+        <label>Grupo</label>
+        <input type="text" id="crearGrupo" placeholder="Ej. 3A" />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarCrear">Cancelar</button>
+        <button class="btn-primary" id="confirmarCrear">
+          <i class="fas fa-check"></i> Crear clase
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Código Generado ── -->
+  <div class="modal-overlay" id="modalCodigo">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-circle-check"></i> Clase creada</h2>
+        <button class="modal-close" id="cerrarCodigo">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <p style="color:#9ca3af; margin-bottom:1rem;">
+        Comparte este código con tus alumnos para que se unan a la clase.
+      </p>
+
+      <div class="code-display">
+        <span id="codigoGenerado">––––––</span>
+        <p>Código de clase</p>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-primary" id="cerrarCodigoBtn">
+          <i class="fas fa-check"></i> Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Editar Clase ── -->
+  <div class="modal-overlay" id="modalEditar">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-pen"></i> Editar clase</h2>
+        <button class="modal-close" id="cerrarEditar">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre de la clase</label>
+        <input type="text" id="editNombre" />
+      </div>
+      <div class="form-group">
+        <label>Grupo</label>
+        <input type="text" id="editGrupo" />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarEditar">Cancelar</button>
+        <button class="btn-primary" id="confirmarEditar">
+          <i class="fas fa-check"></i> Guardar cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Eliminar Clase ── -->
+  <div class="modal-overlay" id="modalEliminar">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-trash"></i> Eliminar clase</h2>
+        <button class="modal-close" id="cerrarEliminar">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <p style="color:#9ca3af; margin-bottom:1.5rem;">
+        ¿Estás seguro de que deseas eliminar la clase
+        <strong style="color:#f1f0f5;" id="eliminarNombre"></strong>?
+        Esta acción no se puede deshacer.
+      </p>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarEliminar">Cancelar</button>
+        <button class="btn-danger" id="confirmarEliminar">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/dashboard-maestro.js"></script>
+  <script src="/js/sesion-maestro.js"></script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Perfil Maestro</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/maestro.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="maestro-body">
+
+  <%- include('../partials/sidebar-maestro', { active: 'perfil' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">M</div>
+        <span class="user-name" id="nombreUsuario">Maestro</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/maestro/dashboard" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar al inicio
+      </a>
+
+      <!-- Encabezado -->
+      <div class="page-header">
+        <div>
+          <h1>Mi Perfil</h1>
+          <p>Consulta y edita tus datos personales</p>
+        </div>
+      </div>
+
+      <!-- Card perfil -->
+      <div class="profile-card">
+
+        <!-- Avatar -->
+        <div style="position: relative; display: inline-block; margin-bottom: 1rem;">
+          <div class="profile-avatar" id="avatarContainer">
+            <span id="avatarText">M</span>
+            <img id="avatarImage" src="" alt="Foto de perfil" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+          </div>
+          <button class="btn-icon" id="btnCambiarFoto" style="position: absolute; bottom: 0; right: 0; background: var(--primary-color); color: var(--bg-color); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+            <i class="fas fa-camera"></i>
+          </button>
+          <input type="file" id="inputFoto" accept="image/*" style="display:none">
+        </div>
+        <div class="profile-name" id="displayNombre">–</div>
+        <div class="profile-role">
+          <i class="fas fa-chalkboard-teacher"></i> Maestro
+        </div>
+
+        <!-- Campos -->
+        <div class="profile-field">
+          <label>Nombre completo</label>
+          <input type="text" id="perfNombre" placeholder="–" disabled />
+        </div>
+        <div class="profile-field">
+          <label>Correo electrónico</label>
+          <input type="email" id="perfCorreo" placeholder="–" disabled />
+        </div>
+        <div class="profile-field">
+          <label>Expediente</label>
+          <input type="text" id="perfExpediente" placeholder="–" disabled />
+        </div>
+        <div class="profile-field">
+          <label>Teléfono</label>
+          <input type="tel" id="perfTelefono" placeholder="–" disabled />
+        </div>
+        <div class="profile-field">
+          <label>Nueva contraseña</label>
+          <input type="password" id="perfPassword" placeholder="Dejar vacío para no cambiar" disabled />
+        </div>
+
+        <!-- Acciones -->
+        <div style="display:flex; gap:0.75rem; margin-top:1.5rem; flex-wrap:wrap;">
+          <button class="btn-primary" id="btnEditar">
+            <i class="fas fa-pen"></i> Editar perfil
+          </button>
+          <button class="btn-secondary" id="btnCancelar" style="display:none;">
+            <i class="fas fa-xmark"></i> Cancelar
+          </button>
+          <button class="btn-primary" id="btnGuardar" style="display:none;">
+            <i class="fas fa-check"></i> Guardar cambios
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/perfil-maestro.js"></script>
+  <script src="/js/sesion-maestro.js"></script>
+</body>
+</html>

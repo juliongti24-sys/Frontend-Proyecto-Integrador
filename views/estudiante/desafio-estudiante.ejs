@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Desafío Multijugador</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/estudiante.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    .challenge-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: var(--surface-color);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    /* Lobby Section */
+    #lobby-section {
+      display: block;
+    }
+    
+    .room-input {
+      font-size: 2rem;
+      padding: 1rem;
+      width: 200px;
+      text-align: center;
+      letter-spacing: 0.5rem;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--bg-color);
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+    }
+
+    .players-waiting {
+      margin-top: 1.5rem;
+      text-align: left;
+      background: var(--bg-color);
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    .players-waiting ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .players-waiting li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Game Section */
+    #game-section {
+      display: none;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      text-align: left;
+    }
+
+    @media (max-width: 768px) {
+      .game-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .question-box {
+      background: var(--bg-color);
+      padding: 3rem;
+      border-radius: 12px;
+      border: 2px solid var(--primary-color);
+      text-align: center;
+    }
+
+    .math-problem {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin-bottom: 2rem;
+    }
+
+    .answer-input {
+      font-size: 2rem;
+      padding: 1rem;
+      width: 150px;
+      text-align: center;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--surface-color);
+      color: var(--text-color);
+    }
+
+    .leaderboard {
+      background: var(--bg-color);
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .leaderboard h3 {
+      margin-top: 0;
+      color: var(--secondary-color);
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+    }
+
+    .leaderboard-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 500;
+    }
+
+    .leaderboard-item.finished {
+      color: #10b981; /* Verde exito */
+    }
+
+    /* Results Section */
+    #results-section {
+      display: none;
+    }
+
+    .podium {
+      font-size: 6rem;
+      color: #f59e0b; /* Dorado */
+      margin-bottom: 1rem;
+    }
+
+    .winner-name {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 2rem;
+    }
+
+  </style>
+</head>
+<body class="estudiante-body">
+
+  <!-- Sidebar Sidebar -->
+  <%- include('../partials/sidebar-estudiante', { active: active }) %>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">E</div>
+        <span class="user-name" id="nombreUsuario">Estudiante</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+      <div style="margin-bottom: 2rem;">
+        <h1 style="color:var(--text-color); font-size:2rem; font-weight:700;">Desafío Multijugador en Tiempo Real</h1>
+        <p style="color:var(--text-muted);">Compite con tus compañeros resolviendo operaciones matemáticas.</p>
+      </div>
+
+      <div class="challenge-container">
+        
+        <!-- ================= LOBBY ================= -->
+        <div id="lobby-section">
+          <h2>Unirse a una Sala</h2>
+          <p style="margin-bottom: 1.5rem; color: var(--text-muted);">Ingresa el código de 4 dígitos proporcionado por tu profesor o compañeros.</p>
+          
+          <input type="text" id="roomCode" class="room-input" maxlength="4" placeholder="----" autocomplete="off" />
+          <br>
+          <button class="btn-primary" id="btnJoin" style="font-size: 1.2rem; padding: 0.75rem 2rem;">
+            <i class="fas fa-sign-in-alt"></i> Entrar a la Sala
+          </button>
+          
+          <div class="players-waiting" id="playersWaitingContainer" style="display: none;">
+            <h3 style="color: var(--secondary-color); margin-top: 0;" id="lobbyStatusText">Esperando jugadores...</h3>
+            <ul id="playersList">
+              <!-- JS inyecta los jugadores aquí -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- ================= GAME AREA ================= -->
+        <div id="game-section">
+          <div class="game-layout">
+            <!-- Izquierda: Pregunta -->
+            <div class="question-box">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; color: var(--text-muted); font-weight: bold;">
+                <span>Progreso:</span>
+                <span id="questionCounter">Pregunta 1 de 5</span>
+              </div>
+              
+              <div class="math-problem" id="questionDisplay">5 + 7 = ?</div>
+              
+              <div style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
+                <input type="number" id="answerInput" class="answer-input" placeholder="0" autocomplete="off" />
+                <button class="btn-primary" id="btnSubmitAnswer" style="height: 54px; padding: 0 1.5rem;">
+                  <i class="fas fa-paper-plane"></i> Enviar
+                </button>
+              </div>
+              
+              <div id="feedbackMessage" style="margin-top: 1.5rem; font-weight: bold; min-height: 24px;"></div>
+            </div>
+
+            <!-- Derecha: Marcador -->
+            <div class="leaderboard">
+              <h3><i class="fas fa-trophy"></i> Marcador en Vivo</h3>
+              <ul class="leaderboard-list" id="leaderboardList">
+                <!-- JS inyecta posiciones aquí -->
+                <li class="leaderboard-item">
+                  <span>Jugador 1</span>
+                  <span>0 pts</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= SCORE / RESULTS ================= -->
+        <div id="results-section">
+          <div class="podium">
+            <i class="fas fa-medal"></i>
+          </div>
+          <h2 style="color: var(--secondary-color); margin-bottom: 0.5rem;">¡Desafío Finalizado!</h2>
+          <div class="winner-name" id="winnerDisplay">Ganador: Juan Pérez</div>
+          
+          <div style="max-width: 400px; margin: 0 auto; background: var(--bg-color); padding: 1.5rem; border-radius: 8px; text-align: left;">
+            <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Resultados Finales</h3>
+            <ul class="leaderboard-list" id="finalLeaderboardList">
+              <!-- JS inyecta aquí -->
+            </ul>
+          </div>
+          
+          <button class="btn-primary" onclick="location.reload()" style="margin-top: 2rem;">
+            <i class="fas fa-redo"></i> Jugar Otra Vez
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/desafio.js"></script>
+  <script src="/js/sesion-estudiante.js"></script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+/* ===== AUTH (login + register) ===== */
+
+.auth-body {
+  background: #0f0c1a;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.auth-wrapper {
+  width: 100%;
+  max-width: 480px;
+  padding: 1rem;
+}
+
+.auth-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: 20px;
+  padding: 2.5rem 2rem;
+  backdrop-filter: blur(12px);
+}
+
+/* Logo */
+.auth-logo {
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.auth-logo .logo-text {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #f1f0f5;
+}
+
+.auth-logo .logo-text span {
+  color: #f59e0b;
+}
+
+.auth-logo p {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+/* Campos */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+.form-group label {
+  display: block;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.input-icon {
+  position: relative;
+}
+
+.input-icon i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+
+.input-icon input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.6rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(251,191,36,0.15);
+  border-radius: 10px;
+  color: #f1f0f5;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+
+.input-icon input:focus {
+  border-color: #f59e0b;
+  background: rgba(255,255,255,0.1);
+}
+
+.input-icon input::placeholder {
+  color: #6b7280;
+}
+
+/* Botón principal */
+.btn-auth {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  border-radius: 10px;
+  color: #1c1a0e;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.btn-auth:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Botón regresar */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  text-decoration: none;
+  margin-bottom: 1.2rem;
+  transition: color 0.2s;
+}
+
+.btn-back:hover {
+  color: #f59e0b;
+}
+
+/* Mensajes */
+.error-msg {
+  background: rgba(239,68,68,0.15);
+  border: 1px solid rgba(239,68,68,0.4);
+  color: #fca5a5;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+.success-msg {
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.4);
+  color: #6ee7b7;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+
+/* Footer del form */
+.auth-footer {
+  text-align: center;
+  margin-top: 1.4rem;
+  color: #9ca3af;
+  font-size: 0.88rem;
+}
+
+.auth-footer a {
+  color: #f59e0b;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}

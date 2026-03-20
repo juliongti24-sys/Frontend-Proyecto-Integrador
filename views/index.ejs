@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathBoost — Plataforma Académica</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+    <!-- ===== VIDEO DE FONDO ===== -->
+    <video class="video-bg" autoplay muted loop playsinline>
+        <source src="/videos/bg.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
+
+    <!-- ===== NAVBAR LANDING ===== -->
+    <div class="navbar">
+        <a href="/" class="logo">Math<span>Boost</span></a>
+        <nav>
+            <a href="/" class="active">Inicio</a>
+            <a href="/login">Iniciar sesión</a>
+            <a href="/register" class="btn btn-primary" style="padding: 0.4rem 1.2rem; margin-left: 1rem;">Registrarse</a>
+        </nav>
+    </div>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1><br><span>¡Bienvenido!</span></h1>
+            <p class="hero-desc">Gestiona alumnos, maestros y cursos en un solo lugar. Diseñado para impulsar el aprendizaje matemático.</p>
+            <div class="hero-buttons">
+                <a href="/register" class="btn btn-primary">Comenzar ahora</a>
+                <a href="/login" class="btn btn-outline">Iniciar sesión</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== SECCIÓN DE CARACTERÍSTICAS ===== -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">¿Qué puedes hacer con MathBoost?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="icon">👨‍🎓</div>
+                    <h3>Gestión de Alumnos</h3>
+                    <p>Registra, edita y administra el perfil de cada estudiante fácilmente.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">👨‍🏫</div>
+                    <h3>Gestión de Maestros</h3>
+                    <p>Administra a los docentes y sus especialidades en un solo panel.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📚</div>
+                    <h3>Gestión de Cursos</h3>
+                    <p>Crea cursos, asigna maestros y matricula alumnos con facilidad.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔐</div>
+                    <h3>Acceso Seguro</h3>
+                    <p>Sistema de autenticación con roles para alumnos y maestros.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <%- include('partials/footer') %>
+
+</body>
+</html>

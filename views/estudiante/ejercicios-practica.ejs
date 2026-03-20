@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Ejercicios</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/estudiante.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="estudiante-body">
+
+  <%- include('../partials/sidebar-estudiante', { active: 'trayectoria' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">E</div>
+        <span class="user-name" id="nombreUsuario">Estudiante</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/estudiante/tema" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar al tema
+      </a>
+
+      <!-- Vista: Ejercicios -->
+      <div id="vistaEjercicios">
+        <div class="ejercicio-card">
+
+          <!-- Progreso -->
+          <div class="ejercicio-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" id="barraProgreso" style="width: 0%"></div>
+            </div>
+            <span class="ejercicio-counter" id="contadorEjercicio">1 / 10</span>
+          </div>
+
+          <!-- Tema -->
+          <p style="color:#f59e0b; font-size:0.85rem; font-weight:600; margin-bottom:0.75rem;">
+            <i class="fas fa-book"></i>
+            <span id="nombreTema">Cargando tema...</span>
+          </p>
+
+          <!-- Pregunta -->
+          <div class="ejercicio-pregunta" id="textoPregunta">
+            Cargando pregunta...
+          </div>
+
+          <!-- Opciones -->
+          <div class="opciones-list" id="listaOpciones">
+            <button class="opcion-btn" data-opcion="A">
+              <span class="opcion-letra">A</span>
+              <span class="opcion-texto">–</span>
+            </button>
+            <button class="opcion-btn" data-opcion="B">
+              <span class="opcion-letra">B</span>
+              <span class="opcion-texto">–</span>
+            </button>
+            <button class="opcion-btn" data-opcion="C">
+              <span class="opcion-letra">C</span>
+              <span class="opcion-texto">–</span>
+            </button>
+            <button class="opcion-btn" data-opcion="D">
+              <span class="opcion-letra">D</span>
+              <span class="opcion-texto">–</span>
+            </button>
+          </div>
+
+          <!-- Feedback -->
+          <div class="feedback-box" id="feedbackBox"></div>
+
+          <!-- Explicación -->
+          <div id="explicacionBox" style="
+            display:none;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(251,191,36,0.15);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            color: #9ca3af;
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+          ">
+            <strong style="color:#fbbf24;">
+              <i class="fas fa-circle-info"></i> Explicación:
+            </strong>
+            <span id="textoExplicacion"></span>
+          </div>
+
+          <!-- Botón siguiente -->
+          <button class="btn-primary" id="btnSiguiente" style="display:none;">
+            Siguiente <i class="fas fa-arrow-right"></i>
+          </button>
+
+        </div>
+      </div>
+
+      <!-- Vista: Resultado final -->
+      <div id="vistaResultado" style="display:none;">
+        <div class="resultado-card">
+          <i class="fas fa-trophy" style="font-size:2.5rem; color:#f59e0b;"></i>
+          <div class="resultado-score" id="resultadoScore">0</div>
+          <div class="resultado-label">de 10 respuestas correctas</div>
+          <p style="color:#9ca3af; font-size:0.9rem; margin-bottom:1.5rem;" id="resultadoMensaje"></p>
+          <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+            <a href="/estudiante/trayectoria" class="btn-primary">
+              <i class="fas fa-route"></i> Volver a trayectoria
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/trayectoria.js"></script>
+  <script src="/js/sesion-estudiante.js"></script>
+
+</body>
+</html>

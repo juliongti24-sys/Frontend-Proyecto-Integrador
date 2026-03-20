@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Panel Admin</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="admin-body">
+
+  <%- include('../partials/sidebar-admin', { active: 'inicio' }) %>
+
+  <div class="main-content">
+
+    <!-- Encabezado -->
+    <div class="page-header">
+      <div>
+        <h1>Panel de Administración</h1>
+        <p>Gestiona los maestros registrados en MathBoost</p>
+      </div>
+      <button class="btn-primary" id="btnAbrirCrear">
+        <i class="fas fa-plus"></i> Nuevo maestro
+      </button>
+    </div>
+
+    <!-- Tabla de maestros -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Expediente</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaMaestros">
+          <!-- Los maestros se cargarán desde la API -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- ── Modal Crear Maestro ── -->
+  <div class="modal-overlay" id="modalCrear">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-user-plus"></i> Nuevo maestro</h2>
+        <button class="modal-close" id="cerrarCrear">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="crearNombre" placeholder="Nombre del maestro" />
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" id="crearCorreo" placeholder="correo@mathboost.com" />
+      </div>
+      <div class="form-group">
+        <label>Expediente</label>
+        <input type="text" id="crearExpediente" placeholder="EXP-000" />
+      </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="tel" id="crearTelefono" placeholder="10 dígitos" />
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="crearPassword" placeholder="Mínimo 6 caracteres" />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarCrear">Cancelar</button>
+        <button class="btn-primary" id="confirmarCrear">
+          <i class="fas fa-check"></i> Crear maestro
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Editar Maestro ── -->
+  <div class="modal-overlay" id="modalEditar">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-pen"></i> Editar maestro</h2>
+        <button class="modal-close" id="cerrarEditar">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre completo</label>
+        <input type="text" id="editNombre" />
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <input type="email" id="editCorreo" />
+      </div>
+      <div class="form-group">
+        <label>Expediente</label>
+        <input type="text" id="editExpediente" />
+      </div>
+      <div class="form-group">
+        <label>Teléfono</label>
+        <input type="tel" id="editTelefono" />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarEditar">Cancelar</button>
+        <button class="btn-primary" id="confirmarEditar">
+          <i class="fas fa-check"></i> Guardar cambios
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Modal Eliminar ── -->
+  <div class="modal-overlay" id="modalEliminar">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-trash"></i> Eliminar maestro</h2>
+        <button class="modal-close" id="cerrarEliminar">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <p style="color:#9ca3af; margin-bottom:1.5rem;">
+        ¿Estás seguro de que deseas eliminar a
+        <strong style="color:#f1f0f5;" id="eliminarNombre"></strong>?
+        Esta acción no se puede deshacer.
+      </p>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarEliminar">Cancelar</button>
+        <button class="btn-danger" id="confirmarEliminar">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/admin.js"></script>
+  <script src="/js/sesion-admin.js"></script>
+  <script src="/js/dashboard-admin.js"></script>
+</body>
+</html>

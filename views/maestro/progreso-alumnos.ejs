@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MathBoost – Progreso Alumnos</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/maestro.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="maestro-body">
+
+  <%- include('../partials/sidebar-maestro', { active: 'progreso' }) %>
+
+  <div class="main-content">
+
+    <!-- Header interno -->
+    <header class="inner-header">
+      <div class="user-info">
+        <div class="user-avatar">M</div>
+        <span class="user-name" id="nombreUsuario">Maestro</span>
+      </div>
+      <button class="btn-manual">
+        <i class="fas fa-book-open"></i> Manual de usuario
+      </button>
+    </header>
+
+    <div class="content-area">
+
+      <!-- Botón regresar -->
+      <a href="/maestro/dashboard" class="btn-back">
+        <i class="fas fa-arrow-left"></i> Regresar al inicio
+      </a>
+
+      <!-- Encabezado -->
+      <div class="page-header">
+        <div>
+          <h1>Progreso de Alumnos</h1>
+          <p>Visualiza el avance general de todos tus estudiantes</p>
+        </div>
+      </div>
+
+      <!-- Gráficas -->
+      <div class="charts-grid">
+
+        <div class="chart-card">
+          <h3><i class="fas fa-chart-bar"></i> Avance en Trayectoria por alumno</h3>
+          <canvas id="chartAvance"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h3><i class="fas fa-star"></i> Promedio de calificaciones por alumno</h3>
+          <canvas id="chartCalificaciones"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h3><i class="fas fa-circle-check"></i> Actividades completadas vs pendientes</h3>
+          <canvas id="chartActividades"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <h3><i class="fas fa-chart-line"></i> Progreso general del grupo</h3>
+          <canvas id="chartGeneral"></canvas>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const gridColor = 'rgba(255,255,255,0.05)'
+    const tickColor = '#9ca3af'
+    const amarillo  = '#f59e0b'
+    const amarilloT = 'rgba(245,158,11,0.5)'
+
+    // ── Avance en Trayectoria ──
+    new Chart(document.getElementById('chartAvance'), {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: '% Avance',
+          data: [],
+          backgroundColor: amarilloT,
+          borderColor: amarillo,
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { color: tickColor },
+            grid: { color: gridColor }
+          },
+          x: {
+            ticks: { color: tickColor },
+            grid: { color: gridColor }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: tickColor } }
+        }
+      }
+    })
+
+    // ── Promedio calificaciones ──
+    new Chart(document.getElementById('chartCalificaciones'), {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Promedio',
+          data: [],
+          backgroundColor: 'rgba(99,102,241,0.5)',
+          borderColor: '#818cf8',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { color: tickColor },
+            grid: { color: gridColor }
+          },
+          x: {
+            ticks: { color: tickColor },
+            grid: { color: gridColor }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: tickColor } }
+        }
+      }
+    })
+
+    // ── Actividades completadas vs pendientes ──
+    new Chart(document.getElementById('chartActividades'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Completadas', 'Pendientes'],
+        datasets: [{
+          data: [0, 100],
+          backgroundColor: ['#f59e0b', 'rgba(255,255,255,0.08)'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        cutout: '70%',
+        plugins: {
+          legend: { labels: { color: tickColor } }
+        }
+      }
+    })
+
+    // ── Progreso general del grupo ──
+    new Chart(document.getElementById('chartGeneral'), {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Progreso %',
+          data: [],
+          borderColor: amarillo,
+          backgroundColor: 'rgba(245,158,11,0.1)',
+          tension: 0.4,
+          fill: true,
+          pointBackgroundColor: amarillo
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { color: tickColor },
+            grid: { color: gridColor }
+          },
+          x: {
+            ticks: { color: tickColor },
+            grid: { color: gridColor }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: tickColor } }
+        }
+      }
+    })
+  </script>
+  <script src="/js/sesion-maestro.js"></script>
+</body>
+</html>
