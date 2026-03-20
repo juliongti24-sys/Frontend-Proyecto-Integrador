@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usuario = JSON.parse(usuarioStore);
     
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/v1/users/${usuario._id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/${usuario._id}`);
         if (response.ok) {
             currentUserData = await response.json();
             fillForm(currentUserData);
@@ -110,7 +110,7 @@ btnGuardar.addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch(`http://127.0.0.1:8000/api/v1/users/${usuario._id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/${usuario._id}`, {
             method: 'PUT',
             body: formData
         });

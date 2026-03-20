@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/v1/classes/${classId}`);
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/classes/${classId}`);
     
     if (!response.ok) {
       throw new Error('Error al cargar información de la clase.');
