@@ -70,6 +70,35 @@ router.get('/maestro/dashboard', (req, res) => {
     });
 });
 
+router.get('/maestro/clase', (req, res) => {
+    res.render('maestro/clase-maestro', { 
+        active: 'inicio',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
+});
+
+router.get('/maestro/progreso', (req, res) => {
+    res.render('maestro/progreso-alumnos', { 
+        active: 'inicio',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
+});
+
+router.get('/maestro/alumno', (req, res) => {
+    res.render('maestro/perfil-alumno-maestro', { 
+        active: 'inicio',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
+});
+
+router.get('/maestro/perfil', (req, res) => {
+    res.render('maestro/perfil-maestro', { 
+        active: 'inicio',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
+});
+
+
 router.get('/admin/dashboard', (req, res) => 
     res.render('admin/dashboard-admin', { 
         active: 'inicio',
