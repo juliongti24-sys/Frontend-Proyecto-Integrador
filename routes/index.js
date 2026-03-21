@@ -15,17 +15,22 @@ router.get('/register', (req, res) => {
 
 // 3. Ruta para mostrar el formulario de Login
 router.get('/login', (req, res) => {
-    // Renderizar el login
-    res.render('login', { titulo: 'Iniciar Sesión - MathBoost' });
-    //Obtener la url del backend
-    backendUrl = ""
-    backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    // Renderizar el login y pasarle TODAS las variables juntas
+    res.render('login', { 
+        titulo: 'Iniciar Sesión - MathBoost',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
 });
 
 // 4. Ruta para el Dashboard / Inicio de la app
 router.get('/estudiante/dashboard', (req, res) => {
     // Renderizamos el dashboard del estudiante
     res.render('estudiante/dashboard-estudiante',{ active: 'inicio' });
+});
+
+router.get('/estudiante/trayectoria', (req, res) => {
+    // Renderizamos el dashboard del estudiante
+    res.render('estudiante/trayectoria',{ active: 'inicio' });
 });
 
 router.get('/estudiante/progreso', (req, res) => {
