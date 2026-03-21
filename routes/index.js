@@ -18,7 +18,8 @@ router.get('/login', (req, res) => {
     // Renderizar el login
     res.render('login', { titulo: 'Iniciar Sesión - MathBoost' });
     //Obtener la url del backend
-    backendUrl: process.env.BACKEND_URL 
+    backendUrl = ""
+    backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
 });
 
 // 4. Ruta para el Dashboard / Inicio de la app
