@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+router.use((req, res, next) => {
+    res.locals.backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
+    next();
+});
+
 // 1. Ruta principal (Landing page o redirección al login)
 router.get('/', (req, res) => {
     // Si alguien entra a localhost:3000, lo mandamos directo a iniciar sesión
@@ -59,12 +64,22 @@ router.get('/estudiante/clase/:id', (req, res) => {
 
 //Dashboar del maestro
 router.get('/maestro/dashboard', (req, res) => {
-    // Renderizamos el dashboard del estudiante
-    res.render('maestro/dashboard-maestro',{ active: 'inicio' });
+    res.render('maestro/dashboard-maestro', { 
+        active: 'inicio',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
 });
 
-router.get('/admin/dashboard', (req, res) => res.render('admin/dashboard-admin', { active: 'inicio' }))
-router.get('/admin/perfil', (req, res) => res.render('admin/perfil-admin', { active: 'inicio' }))
+router.get('/admin/dashboard', (req, res) => 
+    res.render('admin/dashboard-admin', { 
+        active: 'inicio',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+        }))
+router.get('/admin/perfil', (req, res) =>
+    res.render('admin/perfil-admin', { 
+        active: 'inicio', 
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    }))
 
 
 // Exportamos el router para poder usarlo en tu archivo principal (app.js o server.js)

@@ -157,7 +157,10 @@
       </div>
     </div>
   </div>
-
+  <script>
+      // Inyectamos la URL del backend para que el JS del maestro la pueda usar
+      window.API_BASE_URL = "<%= backendUrl %>"; 
+  </script>
   <script src="/js/dashboard-maestro.js"></script>
   <script src="/js/sesion-maestro.js"></script>
 </body>
