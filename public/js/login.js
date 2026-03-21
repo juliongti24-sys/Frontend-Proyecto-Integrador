@@ -19,10 +19,10 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
 
   errorMsg.style.display = 'none';
 
-  // Llamada al API (Backend)
+  // Llamada al API (Backend) const apiUrl = `${window.API_BASE_URL}/api/v1/auth/login`;
   try {
     // 2. Hacer la petición al backend
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/login`, {
+    const response = await fetch(`${window.API_BASE_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

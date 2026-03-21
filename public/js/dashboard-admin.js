@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             tablaMaestros.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando maestros... <i class="fas fa-spinner fa-spin"></i></td></tr>';
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/teachers`);
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/teachers`);
             const maestros = await response.json();
 
             tablaMaestros.innerHTML = '';
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnConfirmarCrear.disabled = true;
             btnConfirmarCrear.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/register/teacher`, {
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/register/teacher`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -204,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnConfirmarEditar.disabled = true;
             btnConfirmarEditar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/teachers/${editingTeacherId}`, {
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/teachers/${editingTeacherId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nombre, correo, num_empleado, telefono })
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnConfirmarEliminar.disabled = true;
             btnConfirmarEliminar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/admin/teachers/${deletingTeacherId}`, {
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/teachers/${deletingTeacherId}`, {
                 method: 'DELETE'
             });
 

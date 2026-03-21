@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const nombreFinal = grupoClase ? `${nombreClase} - ${grupoClase}` : nombreClase;
 
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/teacher/classes`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/teacher/classes`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function cargarClases(maestroId) {
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/teacher/classes/${maestroId}`);
+    const response = await fetch(`${window.API_BASE_URL}/api/v1/teacher/classes/${maestroId}`);
     if (!response.ok) throw new Error('Error al cargar las clases');
     
     const clases = await response.json();

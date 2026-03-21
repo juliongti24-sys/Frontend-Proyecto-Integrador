@@ -41,7 +41,7 @@ if(confirmarUnirse) {
     const estudianteId = usuario._id;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/student/classes/join'`, {
+      const response = await fetch(`${window.API_BASE_URL}/api/v1/student/classes/join'`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ── Cargar clases desde API ──
 async function cargarClasesEstudiante(estudianteId) {
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/student/classes/${estudianteId}`);
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/student/classes/${estudianteId}`);
         if (!response.ok) throw new Error('Error al cargar las clases');
         
         const clases = await response.json();

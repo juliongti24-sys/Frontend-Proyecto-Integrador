@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usuario = JSON.parse(usuarioStore);
     
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/${usuario._id}`);
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`);
         if (response.ok) {
             currentUserData = await response.json();
             fillForm(currentUserData);

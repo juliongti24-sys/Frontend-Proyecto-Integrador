@@ -15,8 +15,10 @@ router.get('/register', (req, res) => {
 
 // 3. Ruta para mostrar el formulario de Login
 router.get('/login', (req, res) => {
-    // Esto busca un archivo llamado 'login.ejs' en tu carpeta 'views'
+    // Renderizar el login
     res.render('login', { titulo: 'Iniciar Sesión - MathBoost' });
+    //Obtener la url del backend
+    backendUrl: process.env.BACKEND_URL 
 });
 
 // 4. Ruta para el Dashboard / Inicio de la app

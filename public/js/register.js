@@ -33,7 +33,7 @@ document.getElementById('registerForm').addEventListener('submit', async e => {
   // 2. Llamada real al backend de FastAPI
   try {
     // Asegúrate de cambiar 'http://localhost:8000' por tu URL de producción cuando subas el proyecto
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/register/student`, {
+    const response = await fetch(`${window.API_BASE_URL}/api/v1/auth/register/student`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
