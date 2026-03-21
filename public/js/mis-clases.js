@@ -41,7 +41,7 @@ if(confirmarUnirse) {
     const estudianteId = usuario._id;
 
     try {
-      const response = await fetch(`${window.API_BASE_URL}/api/v1/student/classes/join'`, {
+      const response = await fetch(`${window.API_BASE_URL}/api/v1/student/classes/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
