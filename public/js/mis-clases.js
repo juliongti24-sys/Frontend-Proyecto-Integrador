@@ -31,7 +31,7 @@ if(confirmarUnirse) {
       return;
     }
     
-    const usuarioStore = localStorage.getItem('usuarioMathBoost');
+    const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
     if (!usuarioStore) {
       window.location.href = '/login';
       return;
@@ -75,7 +75,7 @@ if(confirmarUnirse) {
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
-    const usuarioStore = localStorage.getItem('usuarioMathBoost');
+    const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
     if (!usuarioStore) return;
     
     const usuario = JSON.parse(usuarioStore);

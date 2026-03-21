@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // 1. Proteger rutas
-    const usuarioGuardado = localStorage.getItem('usuarioMathBoost');
+    const usuarioGuardado = sessionStorage.getItem('usuarioMathBoost');
     
     if (!usuarioGuardado) {
         // Si alguien intenta entrar a la fuerza sin login
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCerrarSesion.addEventListener('click', (e) => {
             e.preventDefault();
             // Borramos los datos del navegador
-            localStorage.removeItem('usuarioMathBoost');
+            sessionStorage.removeItem('usuarioMathBoost');
             // Lo regresamos al login
             window.location.href = '/login';
         });

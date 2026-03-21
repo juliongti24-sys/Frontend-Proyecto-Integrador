@@ -9,7 +9,7 @@ const avatarText = document.getElementById('avatarText');
 let currentUserData = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const usuarioStore = localStorage.getItem('usuarioMathBoost');
+    const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
     if (!usuarioStore) {
         window.location.href = '/login';
         return;
@@ -91,7 +91,7 @@ inputFoto.addEventListener('change', (e) => {
 });
 
 btnGuardar.addEventListener('click', async () => {
-    const usuarioStore = localStorage.getItem('usuarioMathBoost');
+    const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
     if (!usuarioStore) return;
     const usuario = JSON.parse(usuarioStore);
 
@@ -123,8 +123,8 @@ btnGuardar.addEventListener('click', async () => {
         currentUserData = updatedData;
         fillForm(updatedData);
         
-        // Actualizar localStorage
-        localStorage.setItem('usuarioMathBoost', JSON.stringify({
+        // Actualizar sessionStorage
+        sessionStorage.setItem('usuarioMathBoost', JSON.stringify({
             ...usuario,
             ...updatedData
         }));

@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const usuarioStore = localStorage.getItem('usuarioMathBoost');
+  const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
   if (!usuarioStore) {
       window.location.href = '/login';
       return;

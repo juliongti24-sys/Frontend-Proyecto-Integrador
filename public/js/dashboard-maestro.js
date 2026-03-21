@@ -12,8 +12,8 @@ function cerrarModal(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Obtener usuario actual del localStorage
-  const usuarioStore = localStorage.getItem('usuarioMathBoost');
+  // Obtener usuario actual del sessionStorage
+  const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
   if (!usuarioStore) {
     window.location.href = '/login';
     return;

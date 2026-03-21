@@ -35,7 +35,7 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
     // 3. Manejo de la respuesta
     if (response.ok) {
       // Guardamos los datos del usuario
-      localStorage.setItem('usuarioMathBoost', JSON.stringify(data.user));
+      sessionStorage.setItem('usuarioMathBoost', JSON.stringify(data.user));
 
       // --- CONTROL DE ACCESO POR ROLES ---
       const rol = data.user.rol;

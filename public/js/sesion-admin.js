@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const usuarioGuardado = localStorage.getItem('usuarioMathBoost');
+    const usuarioGuardado = sessionStorage.getItem('usuarioMathBoost');
     
     if (!usuarioGuardado) {
         window.location.href = '/login';
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('usuarioMathBoost');
+            sessionStorage.removeItem('usuarioMathBoost');
             window.location.href = '/login';
         });
     }
