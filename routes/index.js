@@ -15,7 +15,10 @@ router.get('/', (req, res) => {
 // 2. Ruta para mostrar el formulario de Registro
 router.get('/register', (req, res) => {
     // Esto busca un archivo llamado 'register.ejs' en tu carpeta 'views'
-    res.render('register', { titulo: 'Crear cuenta - MathBoost' });
+    res.render('register', { 
+        titulo: 'Crear cuenta - MathBoost',
+        backendUrl: process.env.BACKEND_URL || 'http://localhost:8000'
+    });
 });
 
 // 3. Ruta para mostrar el formulario de Login
