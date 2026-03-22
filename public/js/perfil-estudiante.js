@@ -130,6 +130,7 @@ btnGuardar.addEventListener('click', async () => {
             ...usuario,
             ...updatedData
         }));
+        actualizarAvataresEnPantalla(data.foto_perfil, data.nombre);
 
         // Restaurar estado de botones e inputs
         campos.forEach(id => document.getElementById(id).disabled = true);
@@ -150,3 +151,22 @@ btnGuardar.addEventListener('click', async () => {
 
 // Inicializar escondiendo el boton de foto
 btnCambiarFoto.style.display = 'none';
+
+
+function actualizarAvataresEnPantalla(fotoUrl, nombre) {
+    const inicial = nombre ? nombre.charAt(0).toUpperCase() : 'E';
+    const avatares = document.querySelectorAll('.user-avatar');
+
+    avatares.forEach(avatar => {
+        if (fotoUrl) {
+            // Si la URL no trae el dominio, se lo agregamos
+            const fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${window.API_BASE_URL}/${fotoUrl.replace(/^\//, '')}`;
+            
+            avatar.innerHTML = `<img src="${fullUrl}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            // Quitamos el padding para que la imagen llene el círculo
+            avatar.style.padding = '0'; 
+        } else {
+            avatar.innerHTML = inicial;
+        }
+    });
+}
