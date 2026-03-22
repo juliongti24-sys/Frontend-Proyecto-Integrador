@@ -41,13 +41,7 @@
 
       <!-- Encabezado Mis Clases -->
       <div class="page-header">
-        <div>
-          <h1>Mis Clases</h1>
-          <p>Accede a tus clases inscritas</p>
-        </div>
-        <button class="btn-primary" id="btnUnirse">
-          <i class="fas fa-plus"></i> Unirse a clase
-        </button>
+       
       </div>
 
       <!-- Grid de clases -->
@@ -55,6 +49,53 @@
         <!-- Las clases se cargarán desde la API -->
       </div>
 
+    </div>
+  </div>
+
+  <!-- ── Modal Unirse a clase ── -->
+  <div class="modal-overlay" id="modalUnirse">
+    <div class="modal">
+      <div class="modal-header">
+        <h2><i class="fas fa-right-to-bracket"></i> Unirse a clase</h2>
+        <button class="modal-close" id="cerrarUnirse">
+          <i class="fas fa-xmark"></i>
+        </button>
+      </div>
+
+      <p style="color:#9ca3af; margin-bottom:1.2rem;">
+        Ingresa el código que te compartió tu maestro para unirte a la clase.
+      </p>
+
+      <div class="form-group">
+        <label>Código de clase</label>
+        <input
+          type="text"
+          id="codigoClase"
+          placeholder="Ej. AB12CD"
+          maxlength="6"
+          style="
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-family: monospace;
+            font-size: 1.1rem;
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(251,191,36,0.15);
+            border-radius: 10px;
+            color: #f1f0f5;
+            outline: none;
+            box-sizing: border-box;
+          "
+        />
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" id="cancelarUnirse">Cancelar</button>
+        <button class="btn-primary" id="confirmarUnirse">
+          <i class="fas fa-check"></i> Unirse
+        </button>
+      </div>
     </div>
   </div>
 
