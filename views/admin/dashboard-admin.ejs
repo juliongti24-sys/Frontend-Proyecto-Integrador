@@ -17,29 +17,40 @@
     <!-- Encabezado -->
     <div class="page-header">
       <div>
-        <h1>Panel de Administración</h1>
-        <p>Gestiona los maestros registrados en MathBoost</p>
+        <h1>Gestión de Usuarios</h1>
+        <p id="subtituloGestion">Administra y monitorea a los miembros de MathBoost</p>
       </div>
       <button class="btn-primary" id="btnAbrirCrear">
-        <i class="fas fa-plus"></i> Nuevo maestro
+        <i class="fas fa-plus"></i> <span id="textoBotonCrear">Nuevo maestro</span>
       </button>
     </div>
 
-    <!-- Tabla de maestros -->
+    <!-- Sistema de Pestañas -->
+    <div class="tabs-container">
+      <button class="tab-btn active" id="tabMaestros" data-tab="maestros">
+        <i class="fas fa-chalkboard-user"></i> Maestros
+      </button>
+      <button class="tab-btn" id="tabAlumnos" data-tab="alumnos">
+        <i class="fas fa-user-graduate"></i> Alumnos
+      </button>
+    </div>
+
+    <!-- Tabla dinámicas -->
     <div class="table-wrapper">
       <table>
-        <thead>
+        <thead id="tablaHeader">
           <tr>
+            <th class="td-avatar"></th>
             <th>Nombre</th>
             <th>Correo</th>
-            <th>Expediente</th>
+            <th id="colIdentificador">Expediente</th>
             <th>Teléfono</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
         </thead>
-        <tbody id="tablaMaestros">
-          <!-- Los maestros se cargarán desde la API -->
+        <tbody id="tablaUsuarios">
+          <!-- Los datos se cargarán dinámicamente -->
         </tbody>
       </table>
     </div>
@@ -50,7 +61,7 @@
   <div class="modal-overlay" id="modalCrear">
     <div class="modal">
       <div class="modal-header">
-        <h2><i class="fas fa-user-plus"></i> Nuevo maestro</h2>
+        <h2 id="modalCrearTitulo"><i class="fas fa-user-plus"></i> Nuevo usuario</h2>
         <button class="modal-close" id="cerrarCrear">
           <i class="fas fa-xmark"></i>
         </button>
@@ -65,8 +76,8 @@
         <input type="email" id="crearCorreo" placeholder="correo@mathboost.com" />
       </div>
       <div class="form-group">
-        <label>Expediente</label>
-        <input type="text" id="crearExpediente" placeholder="EXP-000" />
+        <label id="labelIdentificadorCrear">Expediente / Matrícula</label>
+        <input type="text" id="crearIdentificador" placeholder="Cualquier valor" />
       </div>
       <div class="form-group">
         <label>Teléfono</label>
@@ -80,7 +91,7 @@
       <div class="modal-footer">
         <button class="btn-secondary" id="cancelarCrear">Cancelar</button>
         <button class="btn-primary" id="confirmarCrear">
-          <i class="fas fa-check"></i> Crear maestro
+          <i class="fas fa-check"></i> <span id="textoConfirmarCrear">Crear</span>
         </button>
       </div>
     </div>
@@ -90,7 +101,7 @@
   <div class="modal-overlay" id="modalEditar">
     <div class="modal">
       <div class="modal-header">
-        <h2><i class="fas fa-pen"></i> Editar maestro</h2>
+        <h2 id="modalEditarTitulo"><i class="fas fa-pen"></i> Editar usuario</h2>
         <button class="modal-close" id="cerrarEditar">
           <i class="fas fa-xmark"></i>
         </button>
@@ -105,8 +116,8 @@
         <input type="email" id="editCorreo" />
       </div>
       <div class="form-group">
-        <label>Expediente</label>
-        <input type="text" id="editExpediente" />
+        <label id="labelIdentificadorEditar">Expediente / Matrícula</label>
+        <input type="text" id="editIdentificador" />
       </div>
       <div class="form-group">
         <label>Teléfono</label>
@@ -126,7 +137,7 @@
   <div class="modal-overlay" id="modalEliminar">
     <div class="modal">
       <div class="modal-header">
-        <h2><i class="fas fa-trash"></i> Eliminar maestro</h2>
+        <h2 id="modalEliminarTitulo"><i class="fas fa-trash"></i> Eliminar usuario</h2>
         <button class="modal-close" id="cerrarEliminar">
           <i class="fas fa-xmark"></i>
         </button>

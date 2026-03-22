@@ -1,97 +1,174 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ── Elementos del DOM ──
-    // Modal Crear
-    const btnAbrirCrear = document.getElementById('btnAbrirCrear');
+    const tabMaestros = document.getElementById('tabMaestros');
+    const tabAlumnos = document.getElementById('tabAlumnos');
+    const subtituloGestion = document.getElementById('subtituloGestion');
+    const textoBotonCrear = document.getElementById('textoBotonCrear');
+    const colIdentificador = document.getElementById('colIdentificador');
+    const tablaUsuarios = document.getElementById('tablaUsuarios');
+
+    // Modales
     const modalCrear = document.getElementById('modalCrear');
-    const btnCerrarCrear = document.getElementById('cerrarCrear');
-    const btnCancelarCrear = document.getElementById('cancelarCrear');
-    const btnConfirmarCrear = document.getElementById('confirmarCrear');
-
-    // Modal Editar
     const modalEditar = document.getElementById('modalEditar');
-    const btnCerrarEditar = document.getElementById('cerrarEditar');
-    const btnCancelarEditar = document.getElementById('cancelarEditar');
-    const btnConfirmarEditar = document.getElementById('confirmarEditar');
-
-    // Modal Eliminar
     const modalEliminar = document.getElementById('modalEliminar');
-    const btnCerrarEliminar = document.getElementById('cerrarEliminar');
-    const btnCancelarEliminar = document.getElementById('cancelarEliminar');
+    
+    // Títulos y Labels Modales
+    const modalCrearTitulo = document.getElementById('modalCrearTitulo');
+    const labelIdentificadorCrear = document.getElementById('labelIdentificadorCrear');
+    const textoConfirmarCrear = document.getElementById('textoConfirmarCrear');
+    const modalEditarTitulo = document.getElementById('modalEditarTitulo');
+    const labelIdentificadorEditar = document.getElementById('labelIdentificadorEditar');
+    const modalEliminarTitulo = document.getElementById('modalEliminarTitulo');
+    const eliminarNombre = document.getElementById('eliminarNombre');
+
+    // Botones Globales
+    const btnAbrirCrear = document.getElementById('btnAbrirCrear');
+    const btnConfirmarCrear = document.getElementById('confirmarCrear');
+    const btnConfirmarEditar = document.getElementById('confirmarEditar');
     const btnConfirmarEliminar = document.getElementById('confirmarEliminar');
 
-    const tablaMaestros = document.getElementById('tablaMaestros');
-
-    // Variable global para saber a quién estamos editando/eliminando
-    let editingTeacherId = null;
-    let deletingTeacherId = null;
+    // Variables de Estado
+    let activeTab = 'maestros'; // 'maestros' o 'alumnos'
+    let editingUserId = null;
+    let deletingUserId = null;
 
     // ════════════════════════════════════════════════════════════════
-    //  Cargar maestros
+    //  Lógica de Pestañas
     // ════════════════════════════════════════════════════════════════
-    const cargarMaestros = async () => {
+    const switchTab = (tab) => {
+        activeTab = tab;
+        
+        // Actualizar UI activa
+        if (tab === 'maestros') {
+            tabMaestros.classList.add('active');
+            tabAlumnos.classList.remove('active');
+            subtituloGestion.textContent = "Gestiona los maestros registrados en MathBoost";
+            textoBotonCrear.textContent = "Nuevo maestro";
+            colIdentificador.textContent = "Expediente";
+            // Modales
+            modalCrearTitulo.innerHTML = '<i class="fas fa-user-plus"></i> Nuevo maestro';
+            labelIdentificadorCrear.textContent = "Expediente";
+            textoConfirmarCrear.textContent = "Crear maestro";
+            modalEditarTitulo.innerHTML = '<i class="fas fa-pen"></i> Editar maestro';
+            labelIdentificadorEditar.textContent = "Expediente";
+            modalEliminarTitulo.innerHTML = '<i class="fas fa-trash"></i> Eliminar maestro';
+        } else {
+            tabAlumnos.classList.add('active');
+            tabMaestros.classList.remove('active');
+            subtituloGestion.textContent = "Gestiona los alumnos registrados en MathBoost";
+            textoBotonCrear.textContent = "Nuevo alumno";
+            colIdentificador.textContent = "Matrícula";
+            // Modales
+            modalCrearTitulo.innerHTML = '<i class="fas fa-user-plus"></i> Nuevo alumno';
+            labelIdentificadorCrear.textContent = "Matrícula";
+            textoConfirmarCrear.textContent = "Crear alumno";
+            modalEditarTitulo.innerHTML = '<i class="fas fa-pen"></i> Editar alumno';
+            labelIdentificadorEditar.textContent = "Matrícula";
+            modalEliminarTitulo.innerHTML = '<i class="fas fa-trash"></i> Eliminar alumno';
+        }
+
+        cargarUsuarios();
+    };
+
+    tabMaestros.addEventListener('click', () => switchTab('maestros'));
+    tabAlumnos.addEventListener('click', () => switchTab('alumnos'));
+
+    // ════════════════════════════════════════════════════════════════
+    //  Cargar Usuarios
+    // ════════════════════════════════════════════════════════════════
+    const cargarUsuarios = async () => {
         try {
-            tablaMaestros.innerHTML = '<tr><td colspan="6" style="text-align:center;">Cargando maestros... <i class="fas fa-spinner fa-spin"></i></td></tr>';
+            tablaUsuarios.innerHTML = `<tr><td colspan="7" style="text-align:center;">Cargando ${activeTab}... <i class="fas fa-spinner fa-spin"></i></td></tr>`;
 
-            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/teachers`);
-            const maestros = await response.json();
+            const endpoint = activeTab === 'maestros' ? '/api/v1/admin/teachers' : '/api/v1/admin/students';
+            const response = await fetch(`${window.API_BASE_URL}${endpoint}`);
+            const data = await response.json();
 
-            tablaMaestros.innerHTML = '';
+            tablaUsuarios.innerHTML = '';
 
-            if (maestros.length === 0) {
-                tablaMaestros.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#9ca3af;">No hay maestros registrados aún.</td></tr>';
+            if (data.length === 0) {
+                tablaUsuarios.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#9ca3af;">No hay ${activeTab} registrados aún.</td></tr>`;
                 return;
             }
 
-            maestros.forEach(maestro => {
+            data.forEach(user => {
                 const tr = document.createElement('tr');
+                const identificador = activeTab === 'maestros' ? (user.num_empleado || 'N/A') : (user.matricula || 'N/A');
+                
+                // Avatar logic
+                let avatarHtml = '';
+                if (user.foto_perfil) {
+                    avatarHtml = `<img src="${window.API_BASE_URL}${user.foto_perfil}" class="table-avatar" alt="Avatar">`;
+                } else {
+                    const inicial = user.nombre ? user.nombre.charAt(0).toUpperCase() : '?';
+                    avatarHtml = `<div class="table-avatar-placeholder">${inicial}</div>`;
+                }
+
                 tr.innerHTML = `
-                    <td>${maestro.nombre}</td>
-                    <td>${maestro.correo}</td>
-                    <td>${maestro.num_empleado}</td>
-                    <td>${maestro.telefono}</td>
-                    <td><span class="status-badge active">Activo</span></td>
+                    <td class="td-avatar">${avatarHtml}</td>
+                    <td>${user.nombre}</td>
+                    <td>${user.correo}</td>
+                    <td>${identificador}</td>
+                    <td>${user.telefono || 'N/A'}</td>
+                    <td><span class="badge badge-active">Activo</span></td>
                     <td>
-                        <button class="btn-icon edit" data-id="${maestro._id}" title="Editar"><i class="fas fa-pencil"></i></button>
-                        <button class="btn-icon delete" data-id="${maestro._id}" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        <button class="btn-icon edit" data-id="${user._id}" title="Editar"><i class="fas fa-pencil"></i></button>
+                        <button class="btn-icon delete" data-id="${user._id}" title="Eliminar"><i class="fas fa-trash"></i></button>
                     </td>
                 `;
-                tablaMaestros.appendChild(tr);
+                tablaUsuarios.appendChild(tr);
             });
 
         } catch (error) {
-            console.error("Error al cargar maestros:", error);
-            tablaMaestros.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#ef4444;">Error al cargar los datos.</td></tr>';
+            console.error(`Error al cargar ${activeTab}:`, error);
+            tablaUsuarios.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#ef4444;">Error al cargar los datos.</td></tr>`;
         }
     };
 
-    cargarMaestros();
-
     // ════════════════════════════════════════════════════════════════
-    //  Modal Crear Maestro
+    //  Modales - General
     // ════════════════════════════════════════════════════════════════
-    const abrirModal = () => modalCrear.classList.add('active');
-    const cerrarModal = () => {
+    const closeAllModals = () => {
         modalCrear.classList.remove('active');
-        document.getElementById('crearNombre').value = '';
-        document.getElementById('crearCorreo').value = '';
-        document.getElementById('crearExpediente').value = '';
-        document.getElementById('crearTelefono').value = '';
-        document.getElementById('crearPassword').value = '';
+        modalEditar.classList.remove('active');
+        modalEliminar.classList.remove('active');
+        editingUserId = null;
+        deletingUserId = null;
     };
 
-    btnAbrirCrear.addEventListener('click', abrirModal);
-    btnCerrarCrear.addEventListener('click', cerrarModal);
-    btnCancelarCrear.addEventListener('click', cerrarModal);
+    document.querySelectorAll('.modal-close, .btn-secondary').forEach(btn => {
+        btn.addEventListener('click', closeAllModals);
+    });
 
+    btnAbrirCrear.addEventListener('click', () => {
+        modalCrear.classList.add('active');
+        document.getElementById('crearNombre').value = '';
+        document.getElementById('crearCorreo').value = '';
+        document.getElementById('crearIdentificador').value = '';
+        document.getElementById('crearTelefono').value = '';
+        document.getElementById('crearPassword').value = '';
+    });
+
+    // ════════════════════════════════════════════════════════════════
+    //  CREAR
+    // ════════════════════════════════════════════════════════════════
     btnConfirmarCrear.addEventListener('click', async () => {
-        const nombre = document.getElementById('crearNombre').value.trim();
-        const correo = document.getElementById('crearCorreo').value.trim();
-        const expediente = document.getElementById('crearExpediente').value.trim();
-        const telefono = document.getElementById('crearTelefono').value.trim();
-        const password = document.getElementById('crearPassword').value.trim();
+        const payload = {
+            nombre: document.getElementById('crearNombre').value.trim(),
+            correo: document.getElementById('crearCorreo').value.trim(),
+            telefono: document.getElementById('crearTelefono').value.trim(),
+            password: document.getElementById('crearPassword').value.trim()
+        };
 
-        if (!nombre || !correo || !expediente || !telefono || !password) {
-            alert("Por favor, completa todos los campos.");
+        const identificador = document.getElementById('crearIdentificador').value.trim();
+        if (activeTab === 'maestros') {
+            payload.num_empleado = identificador;
+        } else {
+            payload.matricula = identificador;
+        }
+
+        if (!payload.nombre || !payload.correo || !identificador || !payload.password) {
+            alert("Por favor, completa los campos obligatorios.");
             return;
         }
 
@@ -99,127 +176,101 @@ document.addEventListener('DOMContentLoaded', () => {
             btnConfirmarCrear.disabled = true;
             btnConfirmarCrear.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/register/teacher`, {
+            const endpoint = activeTab === 'maestros' ? '/api/v1/admin/register/teacher' : '/api/v1/admin/students';
+            const response = await fetch(`${window.API_BASE_URL}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: nombre,
-                    correo: correo,
-                    num_empleado: expediente,
-                    telefono: telefono,
-                    password: password
-                })
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                alert("¡Maestro registrado exitosamente!");
-                cargarMaestros();
-                cerrarModal();
+                alert(`¡${activeTab === 'maestros' ? 'Maestro' : 'Alumno'} registrado exitosamente!`);
+                cargarUsuarios();
+                closeAllModals();
             } else {
-                alert(data.detail || "Error al registrar al maestro.");
+                alert(data.detail || "Error al registrar.");
             }
-
         } catch (error) {
             console.error("Error:", error);
             alert("No se pudo conectar con el servidor.");
         } finally {
             btnConfirmarCrear.disabled = false;
-            btnConfirmarCrear.innerHTML = '<i class="fas fa-check"></i> Crear maestro';
+            btnConfirmarCrear.innerHTML = `<i class="fas fa-check"></i> ${activeTab === 'maestros' ? 'Crear maestro' : 'Crear alumno'}`;
         }
     });
 
     // ════════════════════════════════════════════════════════════════
-    //  Delegación de eventos – Botones Editar y Eliminar
+    //  Delegación de Eventos (Editar/Eliminar)
     // ════════════════════════════════════════════════════════════════
-    tablaMaestros.addEventListener('click', (e) => {
-        // Determinar qué botón se pulsó (puede ser el <i> interno)
+    tablaUsuarios.addEventListener('click', (e) => {
         const btnEdit = e.target.closest('.edit');
         const btnDelete = e.target.closest('.delete');
 
         if (btnEdit) {
-            const teacherId = btnEdit.getAttribute('data-id');
+            const userId = btnEdit.getAttribute('data-id');
             const fila = btnEdit.closest('tr');
             const celdas = fila.querySelectorAll('td');
 
-            // Pre-llenar los inputs del modal con los datos actuales de la fila
-            document.getElementById('editNombre').value = celdas[0].textContent.trim();
-            document.getElementById('editCorreo').value = celdas[1].textContent.trim();
-            document.getElementById('editExpediente').value = celdas[2].textContent.trim();
-            document.getElementById('editTelefono').value = celdas[3].textContent.trim();
+            document.getElementById('editNombre').value = celdas[1].textContent.trim();
+            document.getElementById('editCorreo').value = celdas[2].textContent.trim();
+            document.getElementById('editIdentificador').value = celdas[3].textContent.trim();
+            document.getElementById('editTelefono').value = celdas[4].textContent.trim();
 
-            // Guardar el ID del maestro que se está editando
-            editingTeacherId = teacherId;
-
-            // Abrir el modal de edición
+            editingUserId = userId;
             modalEditar.classList.add('active');
         }
 
         if (btnDelete) {
-            const teacherId = btnDelete.getAttribute('data-id');
+            const userId = btnDelete.getAttribute('data-id');
             const fila = btnDelete.closest('tr');
-            const nombre = fila.querySelectorAll('td')[0].textContent.trim();
+            const nombre = fila.querySelectorAll('td')[1].textContent.trim();
 
-            // Mostrar el nombre en el modal de confirmación
-            document.getElementById('eliminarNombre').textContent = nombre;
-
-            // Guardar el ID del maestro que se va a eliminar
-            deletingTeacherId = teacherId;
-
-            // Abrir el modal de eliminación
+            eliminarNombre.textContent = nombre;
+            deletingUserId = userId;
             modalEliminar.classList.add('active');
         }
     });
 
     // ════════════════════════════════════════════════════════════════
-    //  Modal Editar – Confirmar / Cerrar
+    //  EDITAR
     // ════════════════════════════════════════════════════════════════
-    const cerrarModalEditar = () => {
-        modalEditar.classList.remove('active');
-        editingTeacherId = null;
-        document.getElementById('editNombre').value = '';
-        document.getElementById('editCorreo').value = '';
-        document.getElementById('editExpediente').value = '';
-        document.getElementById('editTelefono').value = '';
-    };
-
-    btnCerrarEditar.addEventListener('click', cerrarModalEditar);
-    btnCancelarEditar.addEventListener('click', cerrarModalEditar);
-
     btnConfirmarEditar.addEventListener('click', async () => {
-        if (!editingTeacherId) return;
+        if (!editingUserId) return;
 
-        const nombre = document.getElementById('editNombre').value.trim();
-        const correo = document.getElementById('editCorreo').value.trim();
-        const num_empleado = document.getElementById('editExpediente').value.trim();
-        const telefono = document.getElementById('editTelefono').value.trim();
+        const payload = {
+            nombre: document.getElementById('editNombre').value.trim(),
+            correo: document.getElementById('editCorreo').value.trim(),
+            telefono: document.getElementById('editTelefono').value.trim()
+        };
 
-        if (!nombre || !correo || !num_empleado || !telefono) {
-            alert("Por favor, completa todos los campos.");
-            return;
+        const identificador = document.getElementById('editIdentificador').value.trim();
+        if (activeTab === 'maestros') {
+            payload.num_empleado = identificador;
+        } else {
+            payload.matricula = identificador;
         }
 
         try {
             btnConfirmarEditar.disabled = true;
             btnConfirmarEditar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
 
-            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/teachers/${editingTeacherId}`, {
+            const endpoint = activeTab === 'maestros' ? `/api/v1/admin/teachers/${editingUserId}` : `/api/v1/admin/students/${editingUserId}`;
+            const response = await fetch(`${window.API_BASE_URL}${endpoint}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, correo, num_empleado, telefono })
+                body: JSON.stringify(payload)
             });
 
-            const data = await response.json();
-
             if (response.ok) {
-                alert("¡Maestro actualizado exitosamente!");
-                cerrarModalEditar();
-                cargarMaestros();
+                alert("Actualizado exitosamente.");
+                closeAllModals();
+                cargarUsuarios();
             } else {
-                alert(data.detail || "Error al actualizar el maestro.");
+                const data = await response.json();
+                alert(data.detail || "Error al actualizar.");
             }
-
         } catch (error) {
             console.error("Error:", error);
             alert("No se pudo conectar con el servidor.");
@@ -230,38 +281,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ════════════════════════════════════════════════════════════════
-    //  Modal Eliminar – Confirmar / Cerrar
+    //  ELIMINAR
     // ════════════════════════════════════════════════════════════════
-    const cerrarModalEliminar = () => {
-        modalEliminar.classList.remove('active');
-        deletingTeacherId = null;
-        document.getElementById('eliminarNombre').textContent = '';
-    };
-
-    btnCerrarEliminar.addEventListener('click', cerrarModalEliminar);
-    btnCancelarEliminar.addEventListener('click', cerrarModalEliminar);
-
     btnConfirmarEliminar.addEventListener('click', async () => {
-        if (!deletingTeacherId) return;
+        if (!deletingUserId) return;
 
         try {
             btnConfirmarEliminar.disabled = true;
             btnConfirmarEliminar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
 
-            const response = await fetch(`${window.API_BASE_URL}/api/v1/admin/teachers/${deletingTeacherId}`, {
+            const endpoint = activeTab === 'maestros' ? `/api/v1/admin/teachers/${deletingUserId}` : `/api/v1/admin/students/${deletingUserId}`;
+            const response = await fetch(`${window.API_BASE_URL}${endpoint}`, {
                 method: 'DELETE'
             });
 
-            const data = await response.json();
-
             if (response.ok) {
-                alert("Maestro eliminado exitosamente.");
-                cerrarModalEliminar();
-                cargarMaestros();
+                alert("Eliminado exitosamente.");
+                closeAllModals();
+                cargarUsuarios();
             } else {
-                alert(data.detail || "Error al eliminar el maestro.");
+                const data = await response.json();
+                alert(data.detail || "Error al eliminar.");
             }
-
         } catch (error) {
             console.error("Error:", error);
             alert("No se pudo conectar con el servidor.");
@@ -270,4 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnConfirmarEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
         }
     });
+
+    // Carga inicial
+    cargarUsuarios();
 });

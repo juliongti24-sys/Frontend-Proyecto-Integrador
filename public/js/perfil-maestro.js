@@ -38,7 +38,7 @@ function fillForm(data) {
 
     // Manejar la foto de perfil
     if (data.foto_perfil) {
-        const fullImageUrl = `http://127.0.0.1:8000${data.foto_perfil}`;
+        const fullImageUrl = `${window.API_BASE_URL}${data.foto_perfil}`;
         avatarImage.src = fullImageUrl;
         avatarImage.style.display = 'block';
         avatarText.style.display = 'none';
