@@ -38,7 +38,8 @@ function fillForm(data) {
 
     // Manejar la foto de perfil
     if (data.foto_perfil) {
-        const fullImageUrl = `${window.API_BASE_URL}${data.foto_perfil}`;
+        const cleanPath = data.foto_perfil.replace(/^\//, '');
+        const fullImageUrl = `${window.API_BASE_URL}/${cleanPath}`;
         avatarImage.src = fullImageUrl;
         avatarImage.style.display = 'block';
         avatarText.style.display = 'none';

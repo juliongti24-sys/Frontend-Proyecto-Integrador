@@ -38,7 +38,8 @@ function fillForm(data) {
 
     // Manejar la foto de perfil
     if (data.foto_perfil) {
-        const fullImageUrl = `${window.API_BASE_URL}${data.foto_perfil}`;
+        const cleanPath = data.foto_perfil.replace(/^\//, '');
+        const fullImageUrl = `${window.API_BASE_URL}/${cleanPath}`;
         avatarImage.src = fullImageUrl;
         avatarImage.style.display = 'block';
         avatarText.style.display = 'none';
@@ -130,7 +131,7 @@ btnGuardar.addEventListener('click', async () => {
             ...usuario,
             ...updatedData
         }));
-        actualizarAvataresEnPantalla(data.foto_perfil, data.nombre);
+        actualizarAvataresEnPantalla(updatedData.foto_perfil, updatedData.nombre);
 
         // Restaurar estado de botones e inputs
         campos.forEach(id => document.getElementById(id).disabled = true);
@@ -152,21 +153,42 @@ btnGuardar.addEventListener('click', async () => {
 // Inicializar escondiendo el boton de foto
 btnCambiarFoto.style.display = 'none';
 
-
 function actualizarAvataresEnPantalla(fotoUrl, nombre) {
     const inicial = nombre ? nombre.charAt(0).toUpperCase() : 'E';
-    const avatares = document.querySelectorAll('.user-avatar');
+    let fullUrl = null;
 
+    // Construir la URL completa apuntando al backend
+    if (fotoUrl) {
+        // Asegurarnos de que no haya dobles diagonales
+        const cleanPath = fotoUrl.replace(/^\//, ''); 
+        fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${window.API_BASE_URL}/${cleanPath}`;
+        console.log("URL de la foto a cargar:", fullUrl); // <-- ESTO NOS AYUDARÁ A DEBUGEAR
+    }
+
+    // 1. Actualizar TODAS las bolitas pequeñas (Header y Sidebar)
+    const avatares = document.querySelectorAll('.user-avatar');
     avatares.forEach(avatar => {
-        if (fotoUrl) {
-            // Si la URL no trae el dominio, se lo agregamos
-            const fullUrl = fotoUrl.startsWith('http') ? fotoUrl : `${window.API_BASE_URL}/${fotoUrl.replace(/^\//, '')}`;
-            
+        if (fullUrl) {
             avatar.innerHTML = `<img src="${fullUrl}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
-            // Quitamos el padding para que la imagen llene el círculo
             avatar.style.padding = '0'; 
         } else {
             avatar.innerHTML = inicial;
         }
     });
+
+    // 2. Actualizar el avatar GRANDE central de la vista de perfil
+    const imgElement = document.getElementById('avatarImage');
+    const txtElement = document.getElementById('avatarText');
+
+    if (imgElement && txtElement) {
+        if (fullUrl) {
+            imgElement.src = fullUrl;
+            imgElement.style.display = 'block'; // Mostrar la etiqueta <img>
+            txtElement.style.display = 'none';  // Ocultar el texto "E"
+        } else {
+            imgElement.style.display = 'none';
+            txtElement.style.display = 'block';
+            txtElement.textContent = inicial;
+        }
+    }
 }

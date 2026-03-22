@@ -5,30 +5,28 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     // ── Elementos del DOM ──
-    const lobbySection = document.getElementById('lobbySection');
-    const gameSection = document.getElementById('gameSection');
-    const resultsSection = document.getElementById('resultsSection');
+    const lobbySection = document.getElementById('lobby-section');
+    const gameSection = document.getElementById('game-section');
+    const resultsSection = document.getElementById('results-section');
 
     // Lobby
-    const btnStartQueue = document.getElementById('btnStartQueue');
-    const searchingState = document.getElementById('searchingState');
-    const timerDisplay = document.getElementById('timer');
-    const btnCancelQueue = document.getElementById('btnCancelQueue');
+    const btnJoin = document.getElementById('btnJoin');
+    const roomCodeInput = document.getElementById('roomCode');
+    const playersWaitingContainer = document.getElementById('playersWaitingContainer');
+    const lobbyStatusText = document.getElementById('lobbyStatusText');
+    const playersList = document.getElementById('playersList');
 
     // Game
-    const questionCount = document.getElementById('questionCount');
-    const timeRemaining = document.getElementById('timeRemaining');
-    const displayQuestion = document.getElementById('displayQuestion');
-    const optionsContainer = document.getElementById('optionsContainer');
-    const feedbackMsg = document.getElementById('feedbackMsg');
+    const questionCounter = document.getElementById('questionCounter');
+    const questionDisplay = document.getElementById('questionDisplay');
+    const answerInput = document.getElementById('answerInput');
+    const btnSubmitAnswer = document.getElementById('btnSubmitAnswer');
+    const feedbackMessage = document.getElementById('feedbackMessage');
+    const leaderboardList = document.getElementById('leaderboardList');
 
-    // Players Info
-    const p1Name = document.getElementById('p1Name');
-    const p1Avatar = document.getElementById('p1Avatar');
-    const p1Score = document.getElementById('p1Score');
-    const p2Name = document.getElementById('p2Name');
-    const p2Avatar = document.getElementById('p2Avatar');
-    const p2Score = document.getElementById('p2Score');
+    // Results
+    const winnerDisplay = document.getElementById('winnerDisplay');
+    const finalLeaderboardList = document.getElementById('finalLeaderboardList');
 
     // Results
     const resultTitle = document.getElementById('resultTitle');
@@ -54,42 +52,38 @@ document.addEventListener('DOMContentLoaded', () => {
     //  Lógica de Búsqueda (Cola)
     // ════════════════════════════════════════════════════════════════
     const startSearching = async () => {
+        const roomCode = roomCodeInput.value.trim();
+        // Nota: Actualmente el backend ignora el roomCode y usa una cola global,
+        // pero lo mantenemos para futura implementación de salas privadas.
+        
         try {
-            btnStartQueue.style.display = 'none';
-            searchingState.style.display = 'block';
+            btnJoin.disabled = true;
+            btnJoin.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
+            playersWaitingContainer.style.display = 'block';
+            lobbyStatusText.textContent = "Buscando oponente...";
             
-            // Iniciar timer visual
-            secondsElapsed = 0;
-            const timerInt = setInterval(() => {
-                secondsElapsed++;
-                const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
-                const secs = String(secondsElapsed % 60).padStart(2, '0');
-                timerDisplay.textContent = `${mins}:${secs}`;
-            }, 1000);
-
             // Llamar al backend para entrar a cola
             const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/queue`, {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}` }
+                headers: { 
+                    'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ room_code: roomCode })
             });
 
             // Iniciar Polling de estado
             pollInterval = setInterval(checkStatus, 2000);
 
-            btnCancelQueue.addEventListener('click', async () => {
-                clearInterval(timerInt);
-                clearInterval(pollInterval);
-                await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`, { method: 'DELETE' });
-                location.reload();
-            });
-
         } catch (error) {
             console.error("Error al buscar partida:", error);
             alert("No se pudo conectar con el servidor de desafíos.");
+            btnJoin.disabled = false;
+            btnJoin.innerHTML = '<i class="fas fa-sign-in-alt"></i> Entrar a la Sala';
         }
     };
 
-    btnStartQueue.addEventListener('click', startSearching);
+    btnJoin.addEventListener('click', startSearching);
 
     // ════════════════════════════════════════════════════════════════
     //  Polling de Estado
@@ -138,7 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderAvatar = (element, url, name) => {
         if (url) {
-            element.innerHTML = `<img src="${window.API_BASE_URL}${url}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            const cleanPath = url.replace(/^\//, '');
+            element.innerHTML = `<img src="${window.API_BASE_URL}/${cleanPath}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         } else {
             element.textContent = name ? name.charAt(0).toUpperCase() : '?';
         }
@@ -152,21 +147,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQuestionIndex = index;
         const q = questions[index];
-        questionCount.textContent = `Pregunta ${index + 1}/${questions.length}`;
-        displayQuestion.textContent = q.pregunta;
-        feedbackMsg.textContent = '';
-
-        optionsContainer.innerHTML = '';
-        q.opciones.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.textContent = opt;
-            btn.onclick = () => handleAnswer(opt, btn);
-            optionsContainer.appendChild(btn);
-        });
+        questionCounter.textContent = `Pregunta ${index + 1} de ${questions.length}`;
+        questionDisplay.textContent = q.pregunta;
+        feedbackMessage.textContent = '';
+        answerInput.value = '';
+        answerInput.focus();
     };
 
-    const handleAnswer = async (answer, btn) => {
+    btnSubmitAnswer.onclick = () => {
+        const answer = answerInput.value.trim();
+        if (answer) {
+            handleAnswer(answer);
+        }
+    };
+
+    answerInput.onkeypress = (e) => {
+        if (e.key === 'Enter') {
+            const answer = answerInput.value.trim();
+            if (answer) {
+                handleAnswer(answer);
+            }
+        }
+    };
+
+    const handleAnswer = async (answer) => {
         if (isWaitingResponse) return;
         isWaitingResponse = true;
 
@@ -183,15 +187,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             
             if (result.correct) {
-                btn.classList.add('correct');
-                feedbackMsg.style.color = '#10b981';
-                feedbackMsg.textContent = "¡Excelente!";
-                p1Score.textContent = `${result.score_update} pts`;
+                feedbackMessage.style.color = '#10b981';
+                feedbackMessage.textContent = "¡Excelente! +10 pts";
             } else {
-                btn.classList.add('wrong');
-                feedbackMsg.style.color = '#ef4444';
-                feedbackMsg.textContent = "¡Sigue intentando!";
+                feedbackMessage.style.color = '#ef4444';
+                feedbackMessage.textContent = "¡Sigue intentando!";
             }
+
+            // Actualizar marcador local inmediatamente para feedback rápido
+            updateScoresOnly();
 
             setTimeout(() => {
                 isWaitingResponse = false;
@@ -210,10 +214,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`);
             const data = await response.json();
             if (data.scores) {
-                const myId = currentUser._id;
-                const opId = data.opponent_id;
-                p1Score.textContent = `${data.scores[myId]} pts`;
-                p2Score.textContent = `${data.scores[opId]} pts`;
+                leaderboardList.innerHTML = '';
+                Object.keys(data.scores).forEach(playerId => {
+                    const isMe = playerId === currentUser._id;
+                    const pInfo = data.player_info[playerId];
+                    const li = document.createElement('li');
+                    li.className = 'leaderboard-item';
+                    li.innerHTML = `
+                        <span>${isMe ? 'Tú' : pInfo.nombre}</span>
+                        <span>${data.scores[playerId]} pts</span>
+                    `;
+                    leaderboardList.appendChild(li);
+                });
             }
         } catch (e) {}
     };
@@ -223,23 +235,39 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsSection.style.display = 'block';
 
         // Última actualización de puntajes
-        await updateScoresOnly();
-        
-        const myScore = parseInt(p1Score.textContent);
-        const opScore = parseInt(p2Score.textContent);
+        try {
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`);
+            const data = await response.json();
+            if (data.scores) {
+                finalLeaderboardList.innerHTML = '';
+                let winnerId = null;
+                let maxScore = -1;
 
-        finalMyScore.textContent = myScore;
-        finalOpScore.textContent = opScore;
+                Object.keys(data.scores).forEach(playerId => {
+                    const isMe = playerId === currentUser._id;
+                    const pInfo = data.player_info[playerId];
+                    const score = data.scores[playerId];
+                    
+                    if (score > maxScore) {
+                        maxScore = score;
+                        winnerId = playerId;
+                    }
 
-        if (myScore > opScore) {
-            resultTitle.textContent = "¡Eres el Ganador!";
-            resultSubtitle.textContent = `Has superado a ${p2Name.textContent} en matemáticas.`;
-        } else if (myScore < opScore) {
-            resultTitle.textContent = "¡Buen esfuerzo!";
-            resultSubtitle.textContent = `${p2Name.textContent} ha ganado esta vez. ¡Sigue practicando!`;
-        } else {
-            resultTitle.textContent = "¡Es un Empate!";
-            resultSubtitle.textContent = "¡Ambos son genios matemáticos!";
-        }
+                    const li = document.createElement('li');
+                    li.className = 'leaderboard-item';
+                    li.innerHTML = `
+                        <span>${isMe ? 'Tú' : pInfo.nombre}</span>
+                        <span>${score} pts</span>
+                    `;
+                    finalLeaderboardList.appendChild(li);
+                });
+
+                if (winnerId === currentUser._id) {
+                    winnerDisplay.textContent = "¡Felicidades, ganaste!";
+                } else {
+                    winnerDisplay.textContent = `Ganador: ${data.player_info[winnerId].nombre}`;
+                }
+            }
+        } catch (e) {}
     };
 });

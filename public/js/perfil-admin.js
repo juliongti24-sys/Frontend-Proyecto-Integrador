@@ -37,7 +37,8 @@ function fillForm(data) {
 
     // Manejar la foto de perfil
     if (data.foto_perfil) {
-        const fullImageUrl = `http://127.0.0.1:8000${data.foto_perfil}`;
+        const cleanPath = data.foto_perfil.replace(/^\//, '');
+        const fullImageUrl = `${window.API_BASE_URL}/${cleanPath}`;
         avatarImage.src = fullImageUrl;
         avatarImage.style.display = 'block';
         avatarText.style.display = 'none';
@@ -110,7 +111,7 @@ btnGuardar.addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/users/${usuario._id}`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`, {
             method: 'PUT',
             body: formData
         });

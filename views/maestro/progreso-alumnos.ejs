@@ -75,124 +75,130 @@
     const amarillo  = '#f59e0b'
     const amarilloT = 'rgba(245,158,11,0.5)'
 
-    // ── Avance en Trayectoria ──
-    new Chart(document.getElementById('chartAvance'), {
-      type: 'bar',
-      data: {
-        labels: [],
-        datasets: [{
-          label: '% Avance',
-          data: [],
-          backgroundColor: amarilloT,
-          borderColor: amarillo,
-          borderWidth: 1,
-          borderRadius: 6
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100,
-            ticks: { color: tickColor },
-            grid: { color: gridColor }
-          },
-          x: {
-            ticks: { color: tickColor },
-            grid: { color: gridColor }
-          }
-        },
-        plugins: {
-          legend: { labels: { color: tickColor } }
-        }
-      }
-    })
+    let charts = {};
 
-    // ── Promedio calificaciones ──
-    new Chart(document.getElementById('chartCalificaciones'), {
-      type: 'bar',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Promedio',
-          data: [],
-          backgroundColor: 'rgba(99,102,241,0.5)',
-          borderColor: '#818cf8',
-          borderWidth: 1,
-          borderRadius: 6
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100,
-            ticks: { color: tickColor },
-            grid: { color: gridColor }
-          },
-          x: {
-            ticks: { color: tickColor },
-            grid: { color: gridColor }
-          }
-        },
-        plugins: {
-          legend: { labels: { color: tickColor } }
-        }
-      }
-    })
+    document.addEventListener('DOMContentLoaded', async () => {
+        const usuario = JSON.parse(sessionStorage.getItem('usuarioMathBoost'));
+        if (!usuario) return;
 
-    // ── Actividades completadas vs pendientes ──
-    new Chart(document.getElementById('chartActividades'), {
-      type: 'doughnut',
-      data: {
-        labels: ['Completadas', 'Pendientes'],
-        datasets: [{
-          data: [0, 100],
-          backgroundColor: ['#f59e0b', 'rgba(255,255,255,0.08)'],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        cutout: '70%',
-        plugins: {
-          legend: { labels: { color: tickColor } }
+        try {
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/teacher/analytics`, {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
+                }
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                initCharts(data);
+            } else {
+                console.error('Error fetching analytics:', data.detail);
+            }
+        } catch (error) {
+            console.error('Error:', error);
         }
-      }
-    })
+    });
 
-    // ── Progreso general del grupo ──
-    new Chart(document.getElementById('chartGeneral'), {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [{
-          label: 'Progreso %',
-          data: [],
-          borderColor: amarillo,
-          backgroundColor: 'rgba(245,158,11,0.1)',
-          tension: 0.4,
-          fill: true,
-          pointBackgroundColor: amarillo
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100,
-            ticks: { color: tickColor },
-            grid: { color: gridColor }
+    function initCharts(data) {
+        // Preparar datos
+        const labels = data.clases.map(c => c.nombre);
+        const promedios = data.clases.map(c => c.promedio_puntos);
+        const alumnosCount = data.clases.map(c => c.total_alumnos);
+
+        // ── Avance (Usamos promedios de puntos como proxy) ──
+        charts.avance = new Chart(document.getElementById('chartAvance'), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Puntos Promedio',
+              data: promedios,
+              backgroundColor: amarilloT,
+              borderColor: amarillo,
+              borderWidth: 1,
+              borderRadius: 6
+            }]
           },
-          x: {
-            ticks: { color: tickColor },
-            grid: { color: gridColor }
+          options: {
+            scales: {
+              y: { beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } },
+              x: { ticks: { color: tickColor }, grid: { color: gridColor } }
+            },
+            plugins: { legend: { labels: { color: tickColor } } }
           }
-        },
-        plugins: {
-          legend: { labels: { color: tickColor } }
-        }
-      }
-    })
+        });
+
+        // ── Calificaciones (Top 5 Alumnos) ──
+        const topAlumnos = data.estudiantes_top.slice(0, 8);
+        charts.calif = new Chart(document.getElementById('chartCalificaciones'), {
+          type: 'bar',
+          data: {
+            labels: topAlumnos.map(s => s.nombre),
+            datasets: [{
+              label: 'Puntos Totales',
+              data: topAlumnos.map(s => s.puntos || 0),
+              backgroundColor: 'rgba(99,102,241,0.5)',
+              borderColor: '#818cf8',
+              borderWidth: 1,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            scales: {
+              x: { beginAtZero: true, ticks: { color: tickColor }, grid: { color: gridColor } },
+              y: { ticks: { color: tickColor }, grid: { color: gridColor } }
+            },
+            plugins: { legend: { labels: { color: tickColor } } }
+          }
+        });
+
+        // ── Actividades (Mock logic based on total students) ──
+        const totalAlumnos = data.total_alumnos;
+        const activeAlumnos = data.estudiantes_top.filter(s => (s.puntos || 0) > 0).length;
+        
+        charts.actividades = new Chart(document.getElementById('chartActividades'), {
+          type: 'doughnut',
+          data: {
+            labels: ['Activos', 'Inactivos'],
+            datasets: [{
+              data: [activeAlumnos, Math.max(0, totalAlumnos - activeAlumnos)],
+              backgroundColor: [amarillo, 'rgba(255,255,255,0.08)'],
+              borderWidth: 0
+            }]
+          },
+          options: {
+            cutout: '70%',
+            plugins: {
+              legend: { position: 'bottom', labels: { color: tickColor } }
+            }
+          }
+        });
+
+        // ── Progreso General (Clases) ──
+        charts.general = new Chart(document.getElementById('chartGeneral'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Alumnos por clase',
+              data: alumnosCount,
+              borderColor: amarillo,
+              backgroundColor: 'rgba(245,158,11,0.1)',
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: amarillo
+            }]
+          },
+          options: {
+            scales: {
+              y: { beginAtZero: true, ticks: { color: tickColor, stepSize: 1 }, grid: { color: gridColor } },
+              x: { ticks: { color: tickColor }, grid: { color: gridColor } }
+            },
+            plugins: { legend: { labels: { color: tickColor } } }
+          }
+        });
+    }
   </script>
   <script src="/js/sesion-maestro.js"></script>
 </body>

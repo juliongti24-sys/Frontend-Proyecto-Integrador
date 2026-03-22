@@ -98,7 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Avatar logic
                 let avatarHtml = '';
                 if (user.foto_perfil) {
-                    avatarHtml = `<img src="${window.API_BASE_URL}${user.foto_perfil}" class="table-avatar" alt="Avatar">`;
+                    const cleanPath = user.foto_perfil.replace(/^\//, '');
+                    avatarHtml = `<img src="${window.API_BASE_URL}/${cleanPath}" class="table-avatar" alt="Avatar">`;
                 } else {
                     const inicial = user.nombre ? user.nombre.charAt(0).toUpperCase() : '?';
                     avatarHtml = `<div class="table-avatar-placeholder">${inicial}</div>`;

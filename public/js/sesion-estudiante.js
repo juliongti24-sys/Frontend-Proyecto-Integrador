@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         spanNombre.textContent = usuario.nombre;
         
         if (usuario.foto_perfil) {
-            divAvatar.innerHTML = `<img src="http://127.0.0.1:8000${usuario.foto_perfil}" alt="${usuario.nombre}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            const cleanPath = usuario.foto_perfil.replace(/^\//, '');
+            divAvatar.innerHTML = `<img src="${window.API_BASE_URL}/${cleanPath}" alt="${usuario.nombre}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
             divAvatar.style.background = 'none';
         } else {
             // Ponemos la primera letra de su nombre en el circulito del avatar
