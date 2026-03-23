@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Game
     const questionCounter = document.getElementById('questionCounter');
-    const questionDisplay = document.getElementById('questionDisplay');
+    const questionDisplay = document.getElementById('questionText');
     const answerInput = document.getElementById('answerInput');
     const btnSubmitAnswer = document.getElementById('btnSubmitAnswer');
     const feedbackMessage = document.getElementById('feedbackMessage');
@@ -27,6 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Results
     const winnerDisplay = document.getElementById('winnerDisplay');
     const finalLeaderboardList = document.getElementById('finalLeaderboardList');
+
+    const p1Name = document.getElementById('p1Name');
+    const p1Avatar = document.getElementById('p1Avatar');
+    const p2Name = document.getElementById('p2Name');
+    const p2Avatar = document.getElementById('p2Avatar');
 
     // Results
     const resultTitle = document.getElementById('resultTitle');
@@ -41,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentQuestionIndex = 0;
     let questions = [];
     let isWaitingResponse = false;
+    let matchData = null;
     let currentUser = JSON.parse(sessionStorage.getItem('usuarioMathBoost'));
 
     if (!currentUser) {
@@ -53,6 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // ════════════════════════════════════════════════════════════════
     const startSearching = async () => {
         const roomCode = roomCodeInput.value.trim();
+        
+        if (!roomCode) {
+            alert("Por favor ingresa un código de sala para participar.");
+            return;
+        }
+
         // Nota: Actualmente el backend ignora el roomCode y usa una cola global,
         // pero lo mantenemos para futura implementación de salas privadas.
         
@@ -62,11 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
             playersWaitingContainer.style.display = 'block';
             lobbyStatusText.textContent = "Buscando oponente...";
             
+            const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
+            if (!usuarioStore) return;
+            const usuario = JSON.parse(usuarioStore);
+            const token = sessionStorage.getItem('tokenMathBoost');
+
             // Llamar al backend para entrar a cola
             const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/queue`, {
                 method: 'POST',
                 headers: { 
-                    'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`,
+                    'X-User-ID': usuario._id,
+                    'X-User-Role': usuario.rol,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({ room_code: roomCode })
@@ -88,9 +107,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // ════════════════════════════════════════════════════════════════
     //  Polling de Estado
     // ════════════════════════════════════════════════════════════════
-    const checkStatus = async () => {
+    async function checkStatus() {
+        const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
+        if (!usuarioStore) return;
+        const usuario = JSON.parse(usuarioStore);
+        const token = sessionStorage.getItem('tokenMathBoost');
+
         try {
-            const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`);
+            const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`, {
+                headers: {
+                    'X-User-ID': usuario._id,
+                    'X-User-Role': usuario.rol,
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const data = await response.json();
 
             if (data.status === 'matched' || data.status === 'active') {
@@ -133,7 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderAvatar = (element, url, name) => {
         if (url) {
             const cleanPath = url.replace(/^\//, '');
-            element.innerHTML = `<img src="${window.API_BASE_URL}/${cleanPath}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            const cleanBaseUrl = (window.API_BASE_URL || '').replace(/\/+$/, '');
+            const src = /^https?:\/\//i.test(url) ? url : `${cleanBaseUrl}/${cleanPath}`;
+            element.innerHTML = `<img src="${src}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         } else {
             element.textContent = name ? name.charAt(0).toUpperCase() : '?';
         }
@@ -148,10 +180,15 @@ document.addEventListener('DOMContentLoaded', () => {
         currentQuestionIndex = index;
         const q = questions[index];
         questionCounter.textContent = `Pregunta ${index + 1} de ${questions.length}`;
-        questionDisplay.textContent = q.pregunta;
+        questionDisplay.innerHTML = q.pregunta; // Usamos innerHTML para LaTeX/MathML
         feedbackMessage.textContent = '';
         answerInput.value = '';
         answerInput.focus();
+
+        // Renderizar LaTeX dinámicamente
+        if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+            window.MathJax.typesetPromise([questionDisplay]).catch((err) => console.log('MathJax error:', err));
+        }
     };
 
     btnSubmitAnswer.onclick = () => {
@@ -214,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`);
             const data = await response.json();
             if (data.scores) {
+                matchData = data; // Update matchData with latest scores
                 leaderboardList.innerHTML = '';
                 Object.keys(data.scores).forEach(playerId => {
                     const isMe = playerId === currentUser._id;
@@ -239,9 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${window.API_BASE_URL}/api/v1/challenges/current`);
             const data = await response.json();
             if (data.scores) {
+                matchData = data; // Ensure matchData is up-to-date
                 finalLeaderboardList.innerHTML = '';
                 let winnerId = null;
                 let maxScore = -1;
+                let isDraw = false;
 
                 Object.keys(data.scores).forEach(playerId => {
                     const isMe = playerId === currentUser._id;
@@ -251,6 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (score > maxScore) {
                         maxScore = score;
                         winnerId = playerId;
+                        isDraw = false;
+                    } else if (score === maxScore && maxScore !== -1) {
+                        isDraw = true;
                     }
 
                     const li = document.createElement('li');
@@ -262,11 +305,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     finalLeaderboardList.appendChild(li);
                 });
 
-                if (winnerId === currentUser._id) {
-                    winnerDisplay.textContent = "¡Felicidades, ganaste!";
+                const scores = Object.values(data.scores || {});
+                const allZero = scores.length > 0 && scores.every(score => Number(score) === 0);
+                const sameScore = scores.length > 1 && new Set(scores.map(score => Number(score))).size === 1;
+
+                let winnerText = '';
+                if (allZero || sameScore || isDraw) {
+                    winnerText = 'Empate';
+                } else if (winnerId === currentUser._id) {
+                    winnerText = "¡Felicidades, ganaste!";
+                } else if (winnerId) {
+                    winnerText = `Ganador: ${data.player_info[winnerId].nombre}`;
                 } else {
-                    winnerDisplay.textContent = `Ganador: ${data.player_info[winnerId].nombre}`;
+                    winnerText = "Empate";
                 }
+                winnerDisplay.textContent = winnerText;
             }
         } catch (e) {}
     };

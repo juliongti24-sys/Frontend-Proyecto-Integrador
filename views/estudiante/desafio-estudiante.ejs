@@ -6,7 +6,9 @@
   <title>MathBoost – Desafío Multijugador</title>
   <link rel="stylesheet" href="/css/styles.css" />
   <link rel="stylesheet" href="/css/estudiante.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   <style>
     .challenge-container {
       max-width: 800px;
@@ -200,15 +202,28 @@
           <div class="game-layout">
             <!-- Izquierda: Pregunta -->
             <div class="question-box">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                  <div id="p1Avatar" class="user-avatar" style="width: 50px; height: 50px;">?</div>
+                  <span id="p1Name" style="font-weight: bold;">Tú</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem; flex-direction: row-reverse;">
+                  <div id="p2Avatar" class="user-avatar" style="width: 50px; height: 50px;">?</div>
+                  <span id="p2Name" style="font-weight: bold;">Oponente</span>
+                </div>
+              </div>
+              
               <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; color: var(--text-muted); font-weight: bold;">
                 <span>Progreso:</span>
                 <span id="questionCounter">Pregunta 1 de 5</span>
               </div>
               
-              <div class="math-problem" id="questionDisplay">5 + 7 = ?</div>
+              <div class="challenge-question">
+                <p id="questionText">Cargando desafío...</p>
+                <input type="text" id="answerInput" class="answer-input" placeholder="Tu respuesta..." autocomplete="off" />
+              </div>
               
-              <div style="display: flex; gap: 1rem; justify-content: center; align-items: center;">
-                <input type="number" id="answerInput" class="answer-input" placeholder="0" autocomplete="off" />
+              <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-top: 1rem;">
                 <button class="btn-primary" id="btnSubmitAnswer" style="height: 54px; padding: 0 1.5rem;">
                   <i class="fas fa-paper-plane"></i> Enviar
                 </button>
@@ -237,7 +252,7 @@
             <i class="fas fa-medal"></i>
           </div>
           <h2 style="color: var(--secondary-color); margin-bottom: 0.5rem;">¡Desafío Finalizado!</h2>
-          <div class="winner-name" id="winnerDisplay">Ganador: Juan Pérez</div>
+          <div class="winner-name" id="winnerDisplay">Resultado pendiente...</div>
           
           <div style="max-width: 400px; margin: 0 auto; background: var(--bg-color); padding: 1.5rem; border-radius: 8px; text-align: left;">
             <h3 style="margin-top: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Resultados Finales</h3>

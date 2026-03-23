@@ -56,10 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const nombreFinal = grupoClase ? `${nombreClase} - ${grupoClase}` : nombreClase;
 
       try {
-        const response = await fetch(`${window.API_BASE_URL}/api/v1/teacher/classes`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/classes/teacher`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-User-ID': usuario._id,
+            'X-User-Role': usuario.rol,
+            'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
           },
           body: JSON.stringify({
             nombre_clase: nombreFinal,
@@ -107,8 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function cargarClases(maestroId) {
+  const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
+  const usuario = JSON.parse(usuarioStore);
+
   try {
-    const response = await fetch(`${window.API_BASE_URL}/api/v1/teacher/classes/${maestroId}`);
+    const response = await fetch(`${window.API_BASE_URL}/api/v1/classes/teacher/${maestroId}`, {
+        headers: {
+            'X-User-ID': usuario._id,
+            'X-User-Role': usuario.rol,
+            'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
+        }
+    });
     if (!response.ok) throw new Error('Error al cargar las clases');
     
     const clases = await response.json();

@@ -7,6 +7,13 @@ const inputFoto = document.getElementById('inputFoto');
 const avatarImage = document.getElementById('avatarImage');
 const avatarText = document.getElementById('avatarText');
 let currentUserData = null;
+const buildPhotoUrl = (path) => {
+    if (!path) return '';
+    if (/^https?:\/\//i.test(path)) return path;
+    const base = (window.API_BASE_URL || '').replace(/\/+$/, '');
+    const cleanPath = String(path).replace(/^\/+/, '');
+    return base ? `${base}/${cleanPath}` : `/${cleanPath}`;
+};
 
 document.addEventListener('DOMContentLoaded', async () => {
     const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
@@ -17,7 +24,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usuario = JSON.parse(usuarioStore);
     
     try {
-        const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`);
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`, {
+            headers: {
+                'X-User-ID': usuario._id,
+                'X-User-Role': usuario.rol,
+                'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
+            }
+        });
         if (response.ok) {
             currentUserData = await response.json();
             fillForm(currentUserData);
@@ -38,8 +51,7 @@ function fillForm(data) {
 
     // Manejar la foto de perfil
     if (data.foto_perfil) {
-        const cleanPath = data.foto_perfil.replace(/^\//, '');
-        const fullImageUrl = `${window.API_BASE_URL}/${cleanPath}`;
+        const fullImageUrl = buildPhotoUrl(data.foto_perfil);
         avatarImage.src = fullImageUrl;
         avatarImage.style.display = 'block';
         avatarText.style.display = 'none';
@@ -115,6 +127,11 @@ btnGuardar.addEventListener('click', async () => {
     try {
         const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`, {
             method: 'PUT',
+            headers: {
+                'X-User-ID': usuario._id,
+                'X-User-Role': usuario.rol,
+                'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
+            },
             body: formData
         });
 

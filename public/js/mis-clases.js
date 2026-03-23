@@ -1,5 +1,6 @@
 // ── Helpers ──
 const $ = id => document.getElementById(id);
+const STUDENT_JOIN_ENDPOINT = '/api/v1/students/classes/join';
 
 function abrirModal(id) {
   const modal = $(id);
@@ -40,22 +41,29 @@ if(confirmarUnirse) {
     const usuario = JSON.parse(usuarioStore);
     const estudianteId = usuario._id;
 
+    const token = sessionStorage.getItem('tokenMathBoost');
+
     try {
-      const response = await fetch(`${window.API_BASE_URL}/api/v1/student/classes/join`, {
+      const response = await fetch(`${window.API_BASE_URL}${STUDENT_JOIN_ENDPOINT}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'X-User-ID': estudianteId,
+          'X-User-Role': usuario.rol
         },
         body: JSON.stringify({
-          estudiante_id: estudianteId,
           codigo_acceso: codigo
         })
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        alert(data.detail || 'Error al unirse a la clase');
+        let errorMessage = 'Error al unirse a la clase';
+        try {
+          const data = await response.json();
+          errorMessage = data.detail || errorMessage;
+        } catch (_) {}
+        alert(errorMessage);
         return;
       }
 
@@ -88,8 +96,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ── Cargar clases desde API ──
 async function cargarClasesEstudiante(estudianteId) {
+    const usuarioStore = sessionStorage.getItem('usuarioMathBoost');
+    const usuario = JSON.parse(usuarioStore || '{}');
+    const token = sessionStorage.getItem('tokenMathBoost');
+
     try {
-        const response = await fetch(`${window.API_BASE_URL}/api/v1/student/classes/${estudianteId}`);
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/classes/student/${estudianteId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'X-User-ID': usuario._id,
+                'X-User-Role': usuario.rol
+            }
+        });
         if (!response.ok) throw new Error('Error al cargar las clases');
         
         const clases = await response.json();

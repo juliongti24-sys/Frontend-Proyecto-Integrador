@@ -17,7 +17,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     const usuario = JSON.parse(usuarioStore);
     
     try {
-        const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`);
+        const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`, {
+            headers: {
+                'X-User-ID': usuario._id,
+                'X-User-Role': usuario.rol,
+                'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
+            }
+        });
         if (response.ok) {
             currentUserData = await response.json();
             fillForm(currentUserData);
@@ -115,6 +121,11 @@ btnGuardar.addEventListener('click', async () => {
     try {
         const response = await fetch(`${window.API_BASE_URL}/api/v1/users/${usuario._id}`, {
             method: 'PUT',
+            headers: {
+                'X-User-ID': usuario._id,
+                'X-User-Role': usuario.rol,
+                'Authorization': `Bearer ${sessionStorage.getItem('tokenMathBoost')}`
+            },
             body: formData
         });
 
